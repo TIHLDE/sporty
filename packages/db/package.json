@@ -23,7 +23,6 @@
     "@sporty/config": "workspace:*",
     "@types/pg": "^8.23.1",
     "prisma": "^7.10.0",
-    "typescript": "catalog:",
-    "varlock": "catalog:"
+    "typescript": "catalog:"
   }
 }

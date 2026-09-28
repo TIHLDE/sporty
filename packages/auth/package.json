@@ -11,7 +11,8 @@
   "dependencies": {
     "@sporty/db": "workspace:*",
     "better-auth": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@sporty/spond": "workspace:"
   },
   "devDependencies": {
     "@sporty/config": "workspace:*",
