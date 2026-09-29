@@ -1,19 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
+import Header from "@/components/header";
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 
 export const Route = createFileRoute("/login")({
-  component: RouteComponent,
+	component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [showSignIn, setShowSignIn] = useState(false);
+	const [showSignIn, setShowSignIn] = useState(false);
 
-  return showSignIn ? (
-    <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-  ) : (
-    <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-  );
+	return (
+		<div className="grid h-svh grid-rows-[auto_1fr]">
+			<Header />
+			{showSignIn ? (
+				<SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
+			) : (
+				<SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
+			)}
+		</div>
+	);
 }

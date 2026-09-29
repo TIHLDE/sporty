@@ -1,6 +1,23 @@
 name: sporty
 
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sporty
+    ports:
+      - "5432:5432"
+    volumes:
+      - sporty_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sporty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
   web:
     build:
       context: .
@@ -16,6 +33,10 @@ services:
     environment:
       BETTER_AUTH_URL: http://localhost:3001
       CORS_ORIGIN: http://localhost:3001
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/sporty
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -29,6 +50,10 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    profiles: ["app"]
+
+volumes:
+  sporty_postgres_data:
 
 # BuildKit makes these available only while install/build commands run.
 secrets:

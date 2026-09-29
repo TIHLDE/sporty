@@ -12,7 +12,7 @@
     "@sporty/db": "workspace:*",
     "better-auth": "catalog:",
     "zod": "catalog:",
-    "@sporty/spond": "workspace:"
+    "@sporty/spond": "workspace:*"
   },
   "devDependencies": {
     "@sporty/config": "workspace:*",

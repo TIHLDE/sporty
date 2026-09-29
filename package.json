@@ -34,11 +34,14 @@
     "db:generate": "turbo run db:generate -F @sporty/db --",
     "db:migrate": "turbo run db:migrate -F @sporty/db --",
     "docker:build": "docker compose build",
-    "docker:up": "docker compose up -d --build",
-    "docker:down": "docker compose down",
+    "docker:up": "docker compose --profile app up -d --build",
+    "docker:down": "docker compose --profile app down",
     "docker:logs": "docker compose logs -f",
     "auth:generate": "cd apps/web && bun run auth:generate",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose stop db",
+    "spond:link": "cd apps/web && bun run spond:link"
   },
   "dependencies": {
     "zod": "catalog:"

@@ -13,7 +13,8 @@
     "@sporty/db": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@sporty/spond": "workspace:*"
   },
   "devDependencies": {
     "@sporty/config": "workspace:*",

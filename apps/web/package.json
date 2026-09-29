@@ -6,13 +6,15 @@
     "build": "vite build",
     "serve": "vite preview",
     "dev": "vite dev",
-    "check-types": "vite build && tsc --noEmit"
+    "check-types": "vite build && tsc --noEmit",
+    "spond:link": "bun scripts/link-spond-user.ts"
   },
   "dependencies": {
     "@prisma/client": "catalog:",
     "@sporty/api": "workspace:*",
     "@sporty/auth": "workspace:*",
     "@sporty/db": "workspace:*",
+    "@sporty/spond": "workspace:*",
     "@sporty/ui": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-form": "^1.33.5",
@@ -29,6 +31,7 @@
     "nitro": "3.0.260903-beta",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "recharts": "3.8.0",
     "sonner": "catalog:",
     "tailwindcss": "catalog:",
     "zod": "catalog:"

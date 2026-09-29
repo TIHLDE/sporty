@@ -11,8 +11,14 @@ export type AuthConfig = {
   PHOTON_CLIENT_SECRET: string;
 };
 
-const PHOTON_ISSUER =
+export const PHOTON_ISSUER =
   process.env.PHOTON_ISSUER ?? "https://photon.tihlde.org/api/auth";
+
+// Photon only issues a JWT access token (which its API accepts) when the token
+// request names an audience; otherwise the token is opaque. It has to be sent
+// on every refresh too, or the renewed token falls back to opaque.
+const PHOTON_TOKEN_PARAMS = { resource: PHOTON_ISSUER };
+
 export function createAuth(_env: AuthConfig, database: Database) {
   return betterAuth({
     database: prismaAdapter(database, {
@@ -30,7 +36,11 @@ export function createAuth(_env: AuthConfig, database: Database) {
                   discoveryUrl: `${PHOTON_ISSUER}/.well-known/openid-configuration`,
                   clientId: process.env.PHOTON_CLIENT_ID,
                   clientSecret: process.env.PHOTON_CLIENT_SECRET,
-                  scopes: ["openid", "profile", "email"],
+                  // offline_access gives a refresh token, so we can keep calling
+                  // Photon's API after the one-hour access token expires.
+                  scopes: ["openid", "profile", "email", "offline_access"],
+                  tokenUrlParams: PHOTON_TOKEN_PARAMS,
+                  refreshTokenParams: PHOTON_TOKEN_PARAMS,
                 },
               ]
             : [],

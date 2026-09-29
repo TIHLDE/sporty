@@ -1,0 +1,11 @@
+/// Spond API tokens for the shared service account, keyed by account email.
+model SpondToken {
+  id                    String   @id
+  accessToken           String
+  accessTokenExpiresAt  DateTime
+  refreshToken          String
+  refreshTokenExpiresAt DateTime
+  updatedAt             DateTime @updatedAt
+
+  @@map("spond_token")
+}

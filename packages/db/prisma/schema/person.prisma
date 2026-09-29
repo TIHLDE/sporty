@@ -1,0 +1,70 @@
+/// A Spond member in one of our Spond groups, optionally linked to a TIHLDE user.
+/// Synced from Spond; the TIHLDE link is set by a Spond administrator.
+/// Used as the identity for the fine system ("botsystemet").
+model Person {
+  id             String    @id @default(cuid())
+  spondGroupId   String
+  spondMemberId  String    @unique
+  /// Spond profile id; stable across groups, missing if the member has no Spond account.
+  spondProfileId String?
+  name           String
+  spondEmail     String?
+  tihldeEmail    String?
+  /// Photon (tihlde.org) user id. This is what TIHLDE's fine API identifies people by.
+  tihldeUserId   String?
+  /// Name on tihlde.org, kept for display.
+  tihldeName     String?
+  linkedAt       DateTime?
+  /// App user id of the administrator who created the link.
+  linkedById     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([spondGroupId, tihldeEmail])
+  @@index([spondGroupId, tihldeUserId])
+  @@index([spondEmail])
+  @@index([tihldeEmail])
+  @@map("person")
+}
+
+/// Per Spond group settings.
+model SpondGroupSettings {
+  spondGroupId    String   @id
+  /// Slug of the group on tihlde.org whose fines (bøter) belong to this Spond group.
+  tihldeGroupSlug String?
+
+  /// Fellesbøter: how many bøter someone gets for not replying before the deadline.
+  /// Matches (home/away).
+  fineAmountMatch    Int     @default(2)
+  /// Training, set up in Spond as "treningskamp".
+  fineAmountTraining Int     @default(1)
+  /// Other events. Null means the administrator picks the amount when giving the fines.
+  fineAmountOther    Int?
+  /// Optional paragraph in the TIHLDE group's lovverk the fines are given under.
+  fineLawId          String?
+  fineReason         String  @default("Ikke svart i Spond innen fristen")
+
+  updatedAt       DateTime @updatedAt
+  updatedById     String?
+
+  @@map("spond_group_settings")
+}
+
+/// A fine given through Sporty to someone who didn't reply to an event in time.
+/// One row per person and event, so nobody is fined twice for the same event.
+model EventFine {
+  id            String   @id @default(cuid())
+  spondGroupId  String
+  spondEventId  String
+  spondMemberId String
+  tihldeUserId  String
+  amount        Int
+  /// Id of the fine on tihlde.org, once it has been created there.
+  photonFineId  String?
+  createdById   String
+  createdAt     DateTime @default(now())
+
+  @@unique([spondEventId, spondMemberId])
+  @@index([spondGroupId])
+  @@map("event_fine")
+}
