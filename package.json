@@ -4,7 +4,8 @@
   "workspaces": {
     "packages": [
       "apps/*",
-      "packages/*"
+      "packages/*",
+      "infra/*"
     ],
     "catalog": {
       "zod": "^4.5.4",
@@ -28,28 +29,28 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",
-    "dev:web": "turbo run dev -F web --",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
     "db:push": "turbo run db:push -F @sporty/db --",
     "db:studio": "turbo run db:studio -F @sporty/db --",
     "db:generate": "turbo run db:generate -F @sporty/db --",
     "db:migrate": "turbo run db:migrate -F @sporty/db --",
-    "docker:build": "docker compose build",
-    "docker:up": "docker compose --profile app up -d --build",
-    "docker:down": "docker compose --profile app down",
-    "docker:logs": "docker compose logs -f",
-    "auth:generate": "cd apps/web && bun run auth:generate",
-    "check": "biome check --write .",
-    "db:up": "docker compose up -d db",
-    "db:down": "docker compose stop db",
-    "spond:link": "cd apps/web && bun run spond:link"
+    "docker:dev": "bun run --cwd infra/docker dev:up",
+    "docker:dev:down": "bun run --cwd infra/docker dev:down",
+    "docker:fresh": "bun run --cwd infra/docker dev:fresh",
+    "docker:prod": "bun run --cwd infra/docker prod:up",
+    "docker:prod:down": "bun run --cwd infra/docker prod:down"
   },
   "dependencies": {
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12",
     "@sporty/config": "workspace:*",
     "@types/node": "^26.4.1",
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0",
     "turbo": "^2.10.12",
     "typescript": "catalog:"
   },

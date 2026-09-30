@@ -4,20 +4,21 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
     "dev": {
+      "dependsOn": ["@sporty/db#db:push"],
       "cache": false,
       "persistent": true
     },
+    "dev:up": {
+      "cache": false
+    },
     "db:push": {
+      "dependsOn": ["db:generate", "@sporty/docker#dev:up"],
       "cache": false,
       "interactive": true
     },
@@ -26,10 +27,12 @@
       "interactive": false
     },
     "db:migrate": {
+      "dependsOn": ["@sporty/docker#dev:up"],
       "cache": false,
       "interactive": true
     },
     "db:studio": {
+      "dependsOn": ["@sporty/docker#dev:up"],
       "cache": false,
       "persistent": true
     }
@@ -45,5 +48,5 @@
     "VERCEL_PROJECT_PRODUCTION_URL",
     "VERCEL_URL"
   ],
-  "globalDependencies": [".env*", "apps/*/.env*", "packages/*/.env*"]
+  "globalDependencies": [".env"]
 }
