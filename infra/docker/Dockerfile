@@ -2,10 +2,10 @@ FROM oven/bun:1 AS builder
 WORKDIR /app
 
 COPY . .
-RUN --mount=type=secret,id=web_env,target=/app/apps/web/.env.local --mount=type=secret,id=server_env,target=/app/apps/server/.env.local --mount=type=cache,target=/root/.bun/install/cache bun install
+RUN --mount=type=secret,id=web_env,target=/app/.env --mount=type=cache,target=/root/.bun/install/cache bun install
 
 ENV NODE_ENV=production
-RUN --mount=type=secret,id=web_env,target=/app/apps/web/.env.local --mount=type=secret,id=server_env,target=/app/apps/server/.env.local cd apps/web && bun run build
+RUN --mount=type=secret,id=web_env,target=/app/.env cd apps/web && bun run build
 ENV DATABASE_URL=
 
 FROM node:24-slim AS runner

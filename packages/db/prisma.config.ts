@@ -3,10 +3,10 @@ import path from "node:path";
 
 import { defineConfig, env } from "prisma/config";
 
-// The web app owns the env file; load it so the Prisma CLI sees DATABASE_URL.
-const webEnvFile = path.join(import.meta.dirname, "../../apps/web/.env");
-if (!process.env.DATABASE_URL && existsSync(webEnvFile)) {
-  process.loadEnvFile(webEnvFile);
+// The repo root owns the env file; load it so the Prisma CLI sees DATABASE_URL.
+const rootEnvFile = path.join(import.meta.dirname, "../../.env");
+if (!process.env.DATABASE_URL && existsSync(rootEnvFile)) {
+  process.loadEnvFile(rootEnvFile);
 }
 
 export default defineConfig({

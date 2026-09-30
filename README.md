@@ -34,7 +34,7 @@ bun run db:generate
 This project uses PostgreSQL with Prisma.
 
 1. `bun run dev` starts the local PostgreSQL container (`infra/docker`), generates the Prisma client and pushes the schema (`packages/db`) before the web app starts. To start only the database, run `bun run docker:dev`.
-2. Update your `apps/web/.env` file with your PostgreSQL connection details.
+2. Copy `.env.example` to `.env` in the repo root. The default `DATABASE_URL` matches the local container.
 
 3. Apply the schema to your database:
 
@@ -78,13 +78,13 @@ If you want to add app-specific blocks instead of shared primitives, run the sha
 
 ## Environment Configuration
 
-Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `bun run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
+The root `.env` is the only env file in the project; `.env.example` lists the variables. Copy it and fill in the values:
 
-Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
+```bash
+cp .env.example .env
+```
 
-Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
-
-Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
+Vite (`apps/web/vite.config.ts`), the Prisma CLI (`packages/db/prisma.config.ts`) and Docker Compose (`infra/docker`) all read this file. Bun's automatic env loading is disabled in `bunfig.toml`. Server code reads values through `ENV` in `apps/web/src/env.server.ts`.
 
 ## Deployment
 
@@ -94,7 +94,7 @@ Run standalone Node/Bun tools that use Varlock from the owning app directory so 
 - Build and start the full stack (database + web): `bun run docker:prod`
 - Stop: `bun run docker:prod:down`
 
-Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `infra/docker/docker-compose.yml` for container networking.
+Environment variables are read from the root `.env` file and overridden in `infra/docker/docker-compose.yml` for container networking.
 
 For more details, see the guide on [Deploying with Docker Compose](https://www.better-t-stack.dev/docs/guides/docker).
 

@@ -28,7 +28,7 @@ services:
     ports:
       - "3001:3001"
     env_file:
-      - path: ../../apps/web/.env
+      - path: ../../.env
         required: false
     environment:
       BETTER_AUTH_URL: http://localhost:3001
@@ -58,4 +58,4 @@ volumes:
 # BuildKit makes these available only while install/build commands run.
 secrets:
   web_env:
-    file: ../../apps/web/.env
+    file: ../../.env
