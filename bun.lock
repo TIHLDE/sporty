@@ -60,6 +60,10 @@
         "web-vitals": "^6.2.1",
       },
     },
+    "infra/docker": {
+      "name": "@sporty/docker",
+      "version": "0.0.0",
+    },
     "packages/api": {
       "name": "@sporty/api",
       "dependencies": {
@@ -516,6 +520,8 @@
     "@sporty/config": ["@sporty/config@workspace:packages/config"],
 
     "@sporty/db": ["@sporty/db@workspace:packages/db"],
+
+    "@sporty/docker": ["@sporty/docker@workspace:infra/docker"],
 
     "@sporty/spond": ["@sporty/spond@workspace:packages/spond"],
 

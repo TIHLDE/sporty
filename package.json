@@ -4,7 +4,8 @@
   "workspaces": {
     "packages": [
       "apps/*",
-      "packages/*"
+      "packages/*",
+      "infra/*"
     ],
     "catalog": {
       "zod": "^4.5.4",
@@ -28,23 +29,19 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",
-    "dev:web": "turbo run dev -F web --",
-    "db:push": "turbo run db:push -F @sporty/db --",
-    "db:studio": "turbo run db:studio -F @sporty/db --",
-    "db:generate": "turbo run db:generate -F @sporty/db --",
-    "db:migrate": "turbo run db:migrate -F @sporty/db --",
-    "docker:build": "docker compose build",
-    "docker:up": "docker compose --profile app up -d --build",
-    "docker:down": "docker compose --profile app down",
-    "docker:logs": "docker compose logs -f",
-    "auth:generate": "cd apps/web && bun run auth:generate",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt --check",
     "format:fix": "oxfmt",
-    "db:up": "docker compose up -d db",
-    "db:down": "docker compose stop db",
-    "spond:link": "cd apps/web && bun run spond:link"
+    "db:push": "turbo run db:push -F @sporty/db --",
+    "db:studio": "turbo run db:studio -F @sporty/db --",
+    "db:generate": "turbo run db:generate -F @sporty/db --",
+    "db:migrate": "turbo run db:migrate -F @sporty/db --",
+    "docker:dev": "turbo run dev:up -F @sporty/docker",
+    "docker:dev:down": "turbo run dev:down -F @sporty/docker",
+    "docker:fresh": "turbo run dev:fresh -F @sporty/docker",
+    "docker:prod": "turbo run prod:up -F @sporty/docker",
+    "docker:prod:down": "turbo run prod:down -F @sporty/docker"
   },
   "dependencies": {
     "zod": "catalog:"

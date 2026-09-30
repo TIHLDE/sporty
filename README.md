@@ -33,7 +33,7 @@ bun run db:generate
 
 This project uses PostgreSQL with Prisma.
 
-1. Make sure you have a PostgreSQL database set up.
+1. `bun run dev` starts the local PostgreSQL container (`infra/docker`) before the web app. To start it on its own, run `bun run docker:dev`.
 2. Update your `apps/web/.env` file with your PostgreSQL connection details.
 
 3. Apply the schema to your database:
@@ -90,14 +90,11 @@ Run standalone Node/Bun tools that use Varlock from the owning app directory so 
 
 ### Docker Compose
 
-- Target: web + server
-- Config: `docker-compose.yml` (app Dockerfiles live in `apps/*/Dockerfile`)
-- Build images: bun run docker:build
-- Start: bun run docker:up
-- Logs: bun run docker:logs
-- Stop: bun run docker:down
+- Config: `infra/docker/docker-compose.yml` and `infra/docker/Dockerfile` (the `@sporty/docker` workspace package)
+- Build and start the full stack (database + web): `bun run docker:prod`
+- Stop: `bun run docker:prod:down`
 
-Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `docker-compose.yml` for container networking.
+Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `infra/docker/docker-compose.yml` for container networking.
 
 For more details, see the guide on [Deploying with Docker Compose](https://www.better-t-stack.dev/docs/guides/docker).
 
@@ -112,6 +109,8 @@ For more details, see the guide on [Deploying with Docker Compose](https://www.b
 sporty/
 ├── apps/
 │   └── web/         # Fullstack application (React + TanStack Start)
+├── infra/
+│   └── docker/      # Docker Compose (database + web image)
 ├── packages/
 │   ├── ui/          # Shared shadcn/ui components and styles
 │   ├── api/         # API layer / business logic
@@ -121,21 +120,15 @@ sporty/
 
 ## Available Scripts
 
-- `bun run dev`: Start all applications in development mode
+- `bun run dev`: Start the database container and all applications in development mode
 - `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
 - `bun run check-types`: Check TypeScript types across all apps
+- `bun run lint` / `bun run lint:fix`: Run Oxlint
+- `bun run format` / `bun run format:fix`: Check or apply Oxfmt formatting
 - `bun run db:push`: Push schema changes to database
 - `bun run db:generate`: Generate database client/types
 - `bun run db:migrate`: Run database migrations
 - `bun run db:studio`: Open database studio UI
-- `bun run lint` / `bun run lint:fix`: Run Oxlint
-- `bun run format` / `bun run format:fix`: Check or apply Oxfmt formatting
-- `bun run docker:build`: Build the Docker Compose images
-- `bun run docker:up`: Build and start the Docker Compose stack
-- `bun run docker:logs`: Tail logs from the Docker Compose stack
-- `bun run docker:down`: Stop the Docker Compose stack
-
-## Better Auth Schema Generation
-
-After changing auth plugins or schema options, run `bun run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+- `bun run docker:dev` / `bun run docker:dev:down`: Start or stop the local database container
+- `bun run docker:fresh`: Recreate the database container with an empty volume
+- `bun run docker:prod` / `bun run docker:prod:down`: Build and start, or stop, the full Docker Compose stack

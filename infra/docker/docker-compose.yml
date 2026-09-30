@@ -20,15 +20,15 @@ services:
 
   web:
     build:
-      context: .
-      dockerfile: apps/web/Dockerfile
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
       secrets:
         - web_env
     init: true
     ports:
       - "3001:3001"
     env_file:
-      - path: apps/web/.env
+      - path: ../../apps/web/.env
         required: false
     environment:
       BETTER_AUTH_URL: http://localhost:3001
@@ -58,4 +58,4 @@ volumes:
 # BuildKit makes these available only while install/build commands run.
 secrets:
   web_env:
-    file: apps/web/.env
+    file: ../../apps/web/.env
