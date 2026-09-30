@@ -1,25 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import Header from "@/components/header";
-import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
-
+// Sign-in happens on the home page, with TIHLDE only.
 export const Route = createFileRoute("/login")({
-	component: RouteComponent,
+	beforeLoad: () => {
+		throw redirect({ to: "/" });
+	},
 });
-
-function RouteComponent() {
-	const [showSignIn, setShowSignIn] = useState(false);
-
-	return (
-		<div className="grid h-svh grid-rows-[auto_1fr]">
-			<Header />
-			{showSignIn ? (
-				<SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-			) : (
-				<SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-			)}
-		</div>
-	);
-}

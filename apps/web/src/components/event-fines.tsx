@@ -118,8 +118,8 @@ export function FineRulesForm({ settings }: { settings: Settings }) {
 			}}
 		>
 			<div>
-				<h3 className="text-sm font-medium">Fellesbøter for manglende svar</h3>
-				<p className="text-sm text-muted-foreground">
+				<h3 className="font-medium text-sm">Fellesbøter for manglende svar</h3>
+				<p className="text-muted-foreground text-sm">
 					Antall bøter hver person får når de ikke har svart innen fristen. Kan
 					justeres hver gang bøter gis.
 				</p>
@@ -182,7 +182,7 @@ export function FineRulesForm({ settings }: { settings: Settings }) {
 				<Button type="submit" size="sm" disabled={!valid || save.isPending}>
 					{save.isPending ? "Lagrer…" : "Lagre oppsett"}
 				</Button>
-				<span className="text-xs text-muted-foreground">
+				<span className="text-muted-foreground text-xs">
 					Grunnen får arrangementets navn og dato lagt til, f.eks. «{reason}:
 					Kamp mot abakus (1. okt.)».
 				</span>
@@ -246,9 +246,9 @@ export function EventFinesCard() {
 				{list.isPending ? (
 					<Skeleton className="h-32 rounded-lg" />
 				) : list.isError ? (
-					<p className="text-sm text-muted-foreground">{list.error.message}</p>
+					<p className="text-muted-foreground text-sm">{list.error.message}</p>
 				) : events.length === 0 ? (
-					<p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+					<p className="rounded-lg border border-dashed p-6 text-center text-muted-foreground text-sm">
 						Ingen arrangementer med manglende svar etter fristen 🎉
 					</p>
 				) : (
@@ -279,7 +279,7 @@ export function EventFinesCard() {
 										<TableRow key={event.id}>
 											<TableCell className="pl-4">
 												<div className="font-medium">{event.heading}</div>
-												<div className="text-xs text-muted-foreground">
+												<div className="text-muted-foreground text-xs">
 													{formatDateTime(event.start)}
 												</div>
 											</TableCell>
@@ -302,12 +302,12 @@ export function EventFinesCard() {
 												{!done &&
 													open.length !==
 														event.nonResponders.length - exemptCount && (
-														<span className="block text-xs text-muted-foreground">
+														<span className="block text-muted-foreground text-xs">
 															{open.length} uten bot
 														</span>
 													)}
 												{exemptCount > 0 && (
-													<span className="block text-xs text-muted-foreground">
+													<span className="block text-muted-foreground text-xs">
 														{exemptCount} inaktiv{exemptCount === 1 ? "" : "e"}
 													</span>
 												)}
@@ -343,7 +343,7 @@ export function EventFinesCard() {
 				)}
 			</CardContent>
 			{list.data && !list.data.tihldeGroupSlug && events.length > 0 && (
-				<CardFooter className="text-sm text-muted-foreground">
+				<CardFooter className="text-muted-foreground text-sm">
 					Velg en TIHLDE-gruppe under Botsystem for å kunne gi bøter.
 				</CardFooter>
 			)}
@@ -364,7 +364,10 @@ function GiveFinesDialog({
 }) {
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
+	const settings = useQuery(trpc.people.settings.queryOptions({}));
+	const laws = settings.data?.laws ?? [];
 	const [amount, setAmount] = React.useState("");
+	const [lawId, setLawId] = React.useState(NO_LAW);
 	const [chosen, setChosen] = React.useState<Set<string>>(new Set());
 
 	const eligible = React.useMemo(
@@ -380,6 +383,13 @@ function GiveFinesDialog({
 		setAmount(event.defaultAmount === null ? "" : String(event.defaultAmount));
 		setChosen(new Set(eligible.map((p) => p.memberId)));
 	}, [event, eligible]);
+
+	// Start from the paragraph in the settings each time the dialog opens.
+	const defaultLawId = settings.data?.fineLawId ?? NO_LAW;
+	React.useEffect(() => {
+		if (event) setLawId(defaultLawId);
+	}, [event, defaultLawId]);
+	const selectedLaw = laws.find((l) => l.id === lawId);
 
 	const give = useMutation(
 		trpc.eventFines.give.mutationOptions({
@@ -432,6 +442,7 @@ function GiveFinesDialog({
 							eventId: event.id,
 							amount: amountNumber,
 							memberIds: [...chosen],
+							lawId: lawId === NO_LAW ? null : lawId,
 						});
 					}}
 				>
@@ -458,17 +469,40 @@ function GiveFinesDialog({
 							onChange={(e) => setAmount(e.target.value)}
 						/>
 						{event?.defaultAmount === null && (
-							<p className="text-xs text-muted-foreground">
+							<p className="text-muted-foreground text-xs">
 								Ingen standard for denne typen – velg antall.
 							</p>
 						)}
 						{amount.trim() !== "" && amountNumber === 0 && (
-							<p className="text-xs text-muted-foreground">
+							<p className="text-muted-foreground text-xs">
 								0 bøter vises som en advarsel på tihlde.org og teller ikke i
 								summen. De lagres ikke her, så personene kan fortsatt få ekte
 								bøter for dette arrangementet.
 							</p>
 						)}
+					</div>
+
+					<div className="grid gap-2">
+						<Label>Paragraf i lovverket</Label>
+						<Select value={lawId} onValueChange={(v) => setLawId(v ?? NO_LAW)}>
+							<SelectTrigger className="w-full">
+								<SelectValue>
+									{selectedLaw
+										? `§ ${selectedLaw.paragraph} ${selectedLaw.title}`
+										: "Ingen paragraf"}
+								</SelectValue>
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectItem value={NO_LAW}>Ingen paragraf</SelectItem>
+									{laws.map((law) => (
+										<SelectItem key={law.id} value={law.id}>
+											§ {law.paragraph} {law.title}
+										</SelectItem>
+									))}
+								</SelectGroup>
+							</SelectContent>
+						</Select>
 					</div>
 
 					<div className="grid gap-2">
@@ -493,7 +527,7 @@ function GiveFinesDialog({
 										>
 											{p.name}
 										</Label>
-										<span className="ml-auto text-xs text-muted-foreground">
+										<span className="ml-auto text-muted-foreground text-xs">
 											{p.finedAmount !== null
 												? `fikk ${p.finedAmount}`
 												: p.exempt
@@ -507,12 +541,12 @@ function GiveFinesDialog({
 							})}
 						</ul>
 						{event?.nonResponders.some((p) => p.exempt) && (
-							<p className="text-xs text-muted-foreground">
+							<p className="text-muted-foreground text-xs">
 								Medlemmer i undergruppen «Inaktiv» får ikke fellesbøter.
 							</p>
 						)}
 						{event?.nonResponders.some((p) => !p.linked && !p.exempt) && (
-							<p className="text-xs text-muted-foreground">
+							<p className="text-muted-foreground text-xs">
 								Personer uten TIHLDE-kobling kan ikke få bot før de er koblet.
 							</p>
 						)}

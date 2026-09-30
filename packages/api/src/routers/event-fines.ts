@@ -1,5 +1,5 @@
 import type { Database } from "@sporty/db";
-import { type SpondEvent, SpondError, type SpondGroup } from "@sporty/spond";
+import { SpondError, type SpondEvent, type SpondGroup } from "@sporty/spond";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -174,6 +174,8 @@ export const eventFinesRouter = router({
 					.min(0, "Antall bøter kan ikke være negativt")
 					.max(50, "Maks 50 bøter"),
 				memberIds: z.array(z.string()).min(1, "Velg minst én person"),
+				/** Paragraph in the lovverk. Null means none; left out means the one from the settings. */
+				lawId: z.string().nullable().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -223,6 +225,8 @@ export const eventFinesRouter = router({
 			const personByMember = new Map(people.map((p) => [p.spondMemberId, p]));
 			const stillUnanswered = new Set(nonResponderIds(event));
 			const exempt = exemptMemberIds(group);
+			const lawId =
+				input.lawId === undefined ? settings.fineLawId : input.lawId;
 			const reason = `${settings.fineReason}: ${event.heading} (${dateFormat.format(new Date(event.startTimestamp))})`;
 
 			const given: { name: string; amount: number }[] = [];
@@ -286,7 +290,7 @@ export const eventFinesRouter = router({
 							userId: person.tihldeUserId,
 							amount: input.amount,
 							reason,
-							...(settings.fineLawId ? { lawId: settings.fineLawId } : {}),
+							...(lawId ? { lawId } : {}),
 						},
 					);
 					if (record) {
