@@ -1,4 +1,4 @@
-name: sporty
+name: sporty_prod
 
 services:
   db:
@@ -7,8 +7,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sporty
-    ports:
-      - "5432:5432"
     volumes:
       - sporty_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -50,7 +48,6 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
-    profiles: ["app"]
 
 volumes:
   sporty_postgres_data:

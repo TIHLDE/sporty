@@ -90,8 +90,8 @@ Vite (`apps/web/vite.config.ts`), the Prisma CLI (`packages/db/prisma.config.ts`
 
 ### Docker Compose
 
-- Config: `infra/docker/docker-compose.yml` and `infra/docker/Dockerfile` (the `@sporty/docker` workspace package)
-- Build and start the full stack (database + web): `bun run docker:prod`
+- Production: `infra/docker/docker-compose.yml` (database + web, built from `infra/docker/Dockerfile`). Run `docker compose up -d` in `infra/docker`, or `bun run docker:prod` from the root to rebuild and start.
+- Development: `infra/docker/docker-compose.dev.yml` (database only), started by `bun run dev` or `bun run docker:dev`.
 - Stop: `bun run docker:prod:down`
 
 Environment variables are read from the root `.env` file and overridden in `infra/docker/docker-compose.yml` for container networking.

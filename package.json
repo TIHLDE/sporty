@@ -37,11 +37,11 @@
     "db:studio": "turbo run db:studio -F @sporty/db --",
     "db:generate": "turbo run db:generate -F @sporty/db --",
     "db:migrate": "turbo run db:migrate -F @sporty/db --",
-    "docker:dev": "turbo run dev:up -F @sporty/docker",
-    "docker:dev:down": "turbo run dev:down -F @sporty/docker",
-    "docker:fresh": "turbo run dev:fresh -F @sporty/docker",
-    "docker:prod": "turbo run prod:up -F @sporty/docker",
-    "docker:prod:down": "turbo run prod:down -F @sporty/docker"
+    "docker:dev": "bun run --cwd infra/docker dev:up",
+    "docker:dev:down": "bun run --cwd infra/docker dev:down",
+    "docker:fresh": "bun run --cwd infra/docker dev:fresh",
+    "docker:prod": "bun run --cwd infra/docker prod:up",
+    "docker:prod:down": "bun run --cwd infra/docker prod:down"
   },
   "dependencies": {
     "zod": "catalog:"

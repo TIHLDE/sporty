@@ -17,18 +17,6 @@
     "dev:up": {
       "cache": false
     },
-    "dev:down": {
-      "cache": false
-    },
-    "dev:fresh": {
-      "cache": false
-    },
-    "prod:up": {
-      "cache": false
-    },
-    "prod:down": {
-      "cache": false
-    },
     "db:push": {
       "dependsOn": ["db:generate", "@sporty/docker#dev:up"],
       "cache": false,
