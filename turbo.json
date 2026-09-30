@@ -11,7 +11,7 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
-      "dependsOn": ["@sporty/docker#dev:up"],
+      "dependsOn": ["@sporty/db#db:push"],
       "cache": false,
       "persistent": true
     },
@@ -31,6 +31,7 @@
       "cache": false
     },
     "db:push": {
+      "dependsOn": ["db:generate", "@sporty/docker#dev:up"],
       "cache": false,
       "interactive": true
     },
@@ -39,10 +40,12 @@
       "interactive": false
     },
     "db:migrate": {
+      "dependsOn": ["@sporty/docker#dev:up"],
       "cache": false,
       "interactive": true
     },
     "db:studio": {
+      "dependsOn": ["@sporty/docker#dev:up"],
       "cache": false,
       "persistent": true
     }

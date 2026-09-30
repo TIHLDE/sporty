@@ -33,7 +33,7 @@ bun run db:generate
 
 This project uses PostgreSQL with Prisma.
 
-1. `bun run dev` starts the local PostgreSQL container (`infra/docker`) before the web app. To start it on its own, run `bun run docker:dev`.
+1. `bun run dev` starts the local PostgreSQL container (`infra/docker`), generates the Prisma client and pushes the schema (`packages/db`) before the web app starts. To start only the database, run `bun run docker:dev`.
 2. Update your `apps/web/.env` file with your PostgreSQL connection details.
 
 3. Apply the schema to your database:
