@@ -38,7 +38,10 @@
     "docker:down": "docker compose --profile app down",
     "docker:logs": "docker compose logs -f",
     "auth:generate": "cd apps/web && bun run auth:generate",
-    "check": "biome check --write .",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose stop db",
     "spond:link": "cd apps/web && bun run spond:link"
@@ -47,9 +50,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12",
     "@sporty/config": "workspace:*",
     "@types/node": "^26.4.1",
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0",
     "turbo": "^2.10.12",
     "typescript": "catalog:"
   },

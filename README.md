@@ -12,7 +12,7 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Prisma** - TypeScript-first ORM
 - **PostgreSQL** - Database engine
 - **Authentication** - Better-Auth
-- **Biome** - Linting and formatting
+- **Oxlint & Oxfmt** - Linting and formatting
 - **Turborepo** - Optimized monorepo build system
 
 ## Getting Started
@@ -103,7 +103,8 @@ For more details, see the guide on [Deploying with Docker Compose](https://www.b
 
 ## Git Hooks and Formatting
 
-- Run checks: `bun run check`
+- Lint: `bun run lint` (`bun run lint:fix` to apply fixes)
+- Format: `bun run format` to check, `bun run format:fix` to write
 
 ## Project Structure
 
@@ -128,7 +129,8 @@ sporty/
 - `bun run db:generate`: Generate database client/types
 - `bun run db:migrate`: Run database migrations
 - `bun run db:studio`: Open database studio UI
-- `bun run check`: Run Biome formatting and linting
+- `bun run lint` / `bun run lint:fix`: Run Oxlint
+- `bun run format` / `bun run format:fix`: Check or apply Oxfmt formatting
 - `bun run docker:build`: Build the Docker Compose images
 - `bun run docker:up`: Build and start the Docker Compose stack
 - `bun run docker:logs`: Tail logs from the Docker Compose stack
