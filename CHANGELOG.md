@@ -30,6 +30,7 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ### ✨ Feature
 - `bun run spond:link <spond-epost> <tihlde-epost>` er tilbake: kobler et Spond-medlem til en TIHLDE-e-post fra terminalen, slik at hver utvikler kan sette opp seg selv som administrator i sin lokale database
+- Mal for pull requests (`.github/pull_request_template.md`) med beskrivelse, type endring, skjermbilder og sjekkliste
 
 ### 🐛 Fix
 - Koblingsscriptet leser `.env` fra repo-roten (som appen) i stedet for `apps/web/.env`, som ikke finnes
