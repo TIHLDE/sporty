@@ -30,9 +30,12 @@ import { formatDate } from "@/lib/format";
 import type { SpondOverview } from "@/utils/trpc";
 
 const chartConfig = {
-	accepted: { label: "Påmeldt", color: "var(--primary)" },
-	declined: { label: "Avslått", color: "var(--primary)" },
+	accepted: { label: "Påmeldt", color: "oklch(72.3% 0.219 149.579)" },
+	declined: { label: "Avslått", color: "oklch(63.7% 0.237 25.331)" },
 } satisfies ChartConfig;
+
+// Bottom to top in the stack.
+const series = ["accepted", "declined"] as const;
 
 const ranges = {
 	"90d": { label: "Siste 3 måneder", short: "3 mnd", days: 90 },
@@ -73,7 +76,11 @@ export function ChartAreaInteractive({
 			const start = new Date(event.start).getTime();
 			if (event.cancelled || start < from || start > to) continue;
 			const date = event.start.slice(0, 10);
-			const point = byDay.get(date) ?? { date, accepted: 0, declined: 0 };
+			const point = byDay.get(date) ?? {
+				date,
+				accepted: 0,
+				declined: 0,
+			};
 			point.accepted += event.accepted;
 			point.declined += event.declined;
 			byDay.set(date, point);
@@ -141,30 +148,27 @@ export function ChartAreaInteractive({
 					>
 						<AreaChart data={data}>
 							<defs>
-								<linearGradient id="fillAccepted" x1="0" y1="0" x2="0" y2="1">
-									<stop
-										offset="5%"
-										stopColor="var(--color-accepted)"
-										stopOpacity={1.0}
-									/>
-									<stop
-										offset="95%"
-										stopColor="var(--color-accepted)"
-										stopOpacity={0.1}
-									/>
-								</linearGradient>
-								<linearGradient id="fillDeclined" x1="0" y1="0" x2="0" y2="1">
-									<stop
-										offset="5%"
-										stopColor="var(--color-declined)"
-										stopOpacity={0.8}
-									/>
-									<stop
-										offset="95%"
-										stopColor="var(--color-declined)"
-										stopOpacity={0.1}
-									/>
-								</linearGradient>
+								{series.map((key) => (
+									<linearGradient
+										key={key}
+										id={`fill-${key}`}
+										x1="0"
+										y1="0"
+										x2="0"
+										y2="1"
+									>
+										<stop
+											offset="5%"
+											stopColor={`var(--color-${key})`}
+											stopOpacity={0.8}
+										/>
+										<stop
+											offset="95%"
+											stopColor={`var(--color-${key})`}
+											stopOpacity={0.1}
+										/>
+									</linearGradient>
+								))}
 							</defs>
 							<CartesianGrid vertical={false} />
 							<XAxis
@@ -184,20 +188,16 @@ export function ChartAreaInteractive({
 									/>
 								}
 							/>
-							<Area
-								dataKey="declined"
-								type="natural"
-								fill="url(#fillDeclined)"
-								stroke="var(--color-declined)"
-								stackId="a"
-							/>
-							<Area
-								dataKey="accepted"
-								type="natural"
-								fill="url(#fillAccepted)"
-								stroke="var(--color-accepted)"
-								stackId="a"
-							/>
+							{series.map((key) => (
+								<Area
+									key={key}
+									dataKey={key}
+									type="natural"
+									fill={`url(#fill-${key})`}
+									stroke={`var(--color-${key})`}
+									stackId="a"
+								/>
+							))}
 						</AreaChart>
 					</ChartContainer>
 				)}

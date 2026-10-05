@@ -6,7 +6,8 @@
 //
 //   bun run spond:link <spond-email> <tihlde-email>
 
-process.loadEnvFile(`${import.meta.dirname}/../.env`);
+// The app reads .env from the repo root (see envDir in vite.config.ts).
+process.loadEnvFile(`${import.meta.dirname}/../../../.env`);
 
 const [spondEmail, tihldeEmail] = process.argv.slice(2);
 if (!spondEmail || !tihldeEmail) {

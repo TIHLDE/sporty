@@ -6,7 +6,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "dev": "vite dev",
-    "check-types": "vite build && tsc --noEmit"
+    "check-types": "vite build && tsc --noEmit",
+    "spond:link": "bun scripts/link-spond-user.ts"
   },
   "dependencies": {
     "@prisma/client": "catalog:",

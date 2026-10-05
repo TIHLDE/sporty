@@ -37,6 +37,7 @@
     "db:studio": "turbo run db:studio -F @sporty/db --",
     "db:generate": "turbo run db:generate -F @sporty/db --",
     "db:migrate": "turbo run db:migrate -F @sporty/db --",
+    "spond:link": "bun run --cwd apps/web spond:link",
     "docker:dev": "bun run --cwd infra/docker dev:up",
     "docker:dev:down": "bun run --cwd infra/docker dev:down",
     "docker:fresh": "bun run --cwd infra/docker dev:fresh",
