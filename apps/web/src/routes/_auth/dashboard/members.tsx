@@ -1,5 +1,6 @@
-import { SectionCards } from "@/components/section-cards";
+import { MemberSectionCards } from "@/components/members-section-cards";
 import { SiteHeader } from "@/components/site-header";
+import { MembersTable } from "@/components/spond-tables";
 import { useTRPC } from "@/utils/trpc";
 import { Skeleton } from "@sporty/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +41,14 @@ function RouteComponent() {
           ) : !data ? (
             <MembersSkeleton />
           ) : (
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"></div>
+            <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 md:px-6">
+              <MemberSectionCards stats={data.stats} />
+              {/* TODO: Add filtering by subgroup */}
+              <MembersTable
+                members={data.members}
+                canManagePeople={data.viewer.canManagePeople}
+              />
+            </div>
           )}
         </div>
       </div>
