@@ -446,7 +446,7 @@ function MembersTable({
               </EmptyRow>
             ) : (
               pagination.rows.map((member) => (
-                <TableRow key={member.id}>
+                <TableRow key={member.id} className="odd:bg-white/5">
                   <TableCell className="pl-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="size-7">
@@ -550,7 +550,7 @@ function SubGroupsTable({
             <EmptyRow colSpan={3}>Ingen undergrupper</EmptyRow>
           ) : (
             subGroups.map((s) => (
-              <TableRow key={s.id}>
+              <TableRow key={s.id} className="odd:bg-white/5">
                 <TableCell className="pl-4">
                   <div className="flex items-center gap-2 font-medium">
                     <span
@@ -670,44 +670,44 @@ export function SpondTables({
       <div className="flex md:flex-row flex-wrap items-center md:justify-between gap-2 px-4 lg:px-6">
         <DesktopTabsList data={data} />
         <MobileTabsSelect data={data} value={tab} onChange={onTabChange} />
-          {tab === "events" && (
-            <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
-          )}
-          {tab === "members" && (
-            <>
-              {data.viewer.canManagePeople && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={<Link to="/admin" />}
-                >
-                  <LinkIcon />
-                  <span className="lg:inline">Koble brukere</span>
-                </Button>
-              )}
-              <SubGroupSelect
-                subGroups={data.subGroups}
-                value={subGroupId}
-                onChange={onSubGroupChange}
-              />
-            </>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            nativeButton={false}
-            render={
-              <a
-                href="https://spond.com/client/"
-                target="_blank"
-                rel="noreferrer"
-              />
-            }
-          >
-            <ExternalLinkIcon />
-            <span className=" lg:inline">Åpne i Spond</span>
-          </Button>
+        {tab === "events" && (
+          <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
+        )}
+        {tab === "members" && (
+          <>
+            {data.viewer.canManagePeople && (
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={<Link to="/admin" />}
+              >
+                <LinkIcon />
+                <span className="lg:inline">Koble brukere</span>
+              </Button>
+            )}
+            <SubGroupSelect
+              subGroups={data.subGroups}
+              value={subGroupId}
+              onChange={onSubGroupChange}
+            />
+          </>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={
+            <a
+              href="https://spond.com/client/"
+              target="_blank"
+              rel="noreferrer"
+            />
+          }
+        >
+          <ExternalLinkIcon />
+          <span className=" lg:inline">Åpne i Spond</span>
+        </Button>
       </div>
       <TabsContent
         value="events"
