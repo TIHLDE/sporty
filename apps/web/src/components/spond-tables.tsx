@@ -388,10 +388,12 @@ export function MembersTable({
   members,
   subGroupId,
   canManagePeople,
+  search,
 }: {
   members: SpondOverview["members"];
   subGroupId?: string;
   canManagePeople: boolean;
+  search?: string;
 }) {
   const filtered = React.useMemo(
     () =>
@@ -400,8 +402,11 @@ export function MembersTable({
         : members
       )
         .slice()
+        .filter((m) =>
+          m.name.toLowerCase().includes(search?.trim().toLowerCase() ?? ""),
+        )
         .sort((a, b) => a.name.localeCompare(b.name, "nb")),
-    [members, subGroupId],
+    [members, subGroupId, search],
   );
   const pagination = usePagination(filtered);
   const trpc = useTRPC();

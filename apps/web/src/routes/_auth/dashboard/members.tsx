@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { MembersTable } from "@/components/spond-tables";
 import { useTRPC } from "@/utils/trpc";
 import { Button } from "@sporty/ui/components/button";
+import { Input } from "@sporty/ui/components/input";
 import {
   Select,
   SelectContent,
@@ -38,6 +39,7 @@ function RouteComponent() {
   const data = overview.data;
 
   const [subgroupId, setSubgroupId] = useState<string | undefined>();
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <>
@@ -81,6 +83,13 @@ function RouteComponent() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Input
+                  value={searchTerm}
+                  type="text"
+                  className="w-40"
+                  placeholder="Søk.."
+                  onChange={(v) => setSearchTerm(v.target.value)}
+                />
                 {data.viewer.canManagePeople && (
                   <Button
                     variant="outline"
@@ -97,6 +106,7 @@ function RouteComponent() {
               <MembersTable
                 members={data.members}
                 subGroupId={subgroupId}
+                search={searchTerm}
                 canManagePeople={data.viewer.canManagePeople}
               />
             </div>
