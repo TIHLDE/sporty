@@ -29,7 +29,7 @@ function HomeComponent() {
 		mutationFn: async () => {
 			const result = await authClient.signIn.social({
 				provider: "photon",
-				callbackURL: "/dashboard",
+				callbackURL: "/groups",
 			});
 			if (result.error) {
 				throw new Error(result.error.message ?? "Innlogging med TIHLDE feilet");

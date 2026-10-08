@@ -11,7 +11,6 @@ import { SpondTables } from "@/components/spond-tables";
 import { useTRPC } from "@/utils/trpc";
 
 const searchSchema = z.object({
-  group: z.string().optional(),
   tab: z.enum(["events", "members", "subgroups"]).optional(),
   subGroup: z.string().optional(),
   event: z.string().optional(),
@@ -26,9 +25,7 @@ function RouteComponent() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const trpc = useTRPC();
-  const overview = useQuery(
-    trpc.spond.overview.queryOptions({ groupId: search.group }),
-  );
+  const overview = useQuery(trpc.spond.overview.queryOptions({}));
   const data = overview.data;
 
   return (

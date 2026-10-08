@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   CalendarIcon,
+  ChevronsUpDownIcon,
   ExternalLinkIcon,
   HomeIcon,
   LayoutDashboardIcon,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 
+import { GroupLogo } from "@/components/group-logo";
 import { type NavItem, NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavSubGroups } from "@/components/nav-subgroups";
@@ -69,12 +71,21 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link to="/dashboard" />}
+              render={<Link to="/groups" />}
             >
-              <VolleyballIcon className="size-5!" />
-              <span className="text-base font-semibold">
+              {data ? (
+                <GroupLogo
+                  name={data.group.name}
+                  imageUrl={data.group.imageUrl}
+                  className="size-6"
+                />
+              ) : (
+                <VolleyballIcon className="size-5!" />
+              )}
+              <span className="truncate text-base font-semibold">
                 {data?.group.name ?? "Sporty"}
               </span>
+              <ChevronsUpDownIcon className="ml-auto text-muted-foreground" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

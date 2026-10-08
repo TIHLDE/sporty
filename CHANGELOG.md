@@ -28,6 +28,30 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ---
 
+## 2026-10-08
+
+### ✨ Feature
+
+- Gruppevalg (`/groups`): etter innlogging velger man hvilken Spond-gruppe man vil se. Siden viser logo, sport, antall medlemmer og undergrupper for hver gruppe. Har man bare én gruppe, velges den automatisk. Nederst står hvem man er innlogget som, og man kan logge ut derfra (også når man ikke har tilgang til noen grupper).
+- Spinner (Wave Helix fra UIAble) på gruppekortet mens gruppen velges. UIAble-registeret (`@uiable`) er lagt til i `apps/web/components.json`, så flere komponenter kan hentes med `bunx shadcn add @uiable/<navn>`.
+- Valgt gruppe huskes i en cookie (`sporty-group`) og gjelder hele appen: oversikt, statistikk, medlemmer, bøter og admin.
+- Bytt gruppe fra sidebaren: gruppenavnet øverst (med gruppens logo) lenker til `/groups`.
+- Ny env-variabel `DISPLAY_ALL_GROUPS` (standard `false`). Med `false` ser man bare grupper der man er medlem i Spond, eller der man er medlem av TIHLDE-gruppen som er koblet til Spond-gruppen på admin-siden. Sett den til `true` lokalt for å se alle gruppene under utvikling.
+- Sport vises på norsk med stor forbokstav (f.eks. «football» → «Fotball»), og antall står i riktig entall/flertall («1 medlem»).
+
+### ♻️ Endret
+
+- Innlogging sender nå til `/groups` i stedet for `/dashboard`. Sider under `/dashboard` sender til `/groups` hvis ingen gruppe er valgt, eller hvis man har mistet tilgangen til gruppen man valgte. Er man ikke medlem av noen grupper, sier `/groups` det tydelig og forklarer hvordan man får tilgang.
+- API-et bruker valgt gruppe når `groupId` ikke er oppgitt, i stedet for alltid den første gruppen Spond-kontoen er med i.
+
+### 🗑️ Fjernet
+
+- Søkeparameteren `?group=` på dashboard-sidene (erstattet av gruppevalget).
+
+### 🔒 Sikkerhet
+
+- Med `DISPLAY_ALL_GROUPS=false` sjekker API-et tilgang for hver forespørsel. Man får ikke hentet data for en gruppe man ikke er med i, verken med `groupId` eller ved å endre cookien.
+
 ## 2026-10-05
 
 ### ♻️ Endret
