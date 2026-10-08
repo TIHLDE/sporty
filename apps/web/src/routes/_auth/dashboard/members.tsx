@@ -7,7 +7,6 @@ import { Input } from "@sporty/ui/components/input";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
