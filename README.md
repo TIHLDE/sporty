@@ -132,3 +132,4 @@ sporty/
 - `bun run docker:dev` / `bun run docker:dev:down`: Start or stop the local database container
 - `bun run docker:fresh`: Recreate the database container with an empty volume
 - `bun run docker:prod` / `bun run docker:prod:down`: Build and start, or stop, the full Docker Compose stack
+- `bun run spond:link <spond-epost> <TIHLDE-epost>`: Link en Spond-konto til en TIHLDE-konto

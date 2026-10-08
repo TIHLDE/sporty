@@ -5,11 +5,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@sporty/ui/components/sidebar";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CirclePlusIcon, MessageCircleIcon } from "lucide-react";
 
 import type { TableTab } from "@/components/spond-tables";
+import type { FileRouteTypes } from "@/routeTree.gen";
 
 export type NavItem = {
   title: string;
@@ -21,6 +23,7 @@ export type NavItem = {
 export function NavMain({ items }: { items: NavItem[] }) {
   const location = useRouterState({ select: (s) => s.location });
   const currentTab = (location.search as { tab?: TableTab }).tab;
+  const sidebar = useSidebar();
   const isActive = (item: NavItem) =>
     location.pathname === item.to &&
     (item.to !== "/dashboard" || currentTab === item.tab);
@@ -67,6 +70,10 @@ export function NavMain({ items }: { items: NavItem[] }) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
+                onClick={() => {
+                  if (!sidebar.isMobile) return;
+                  sidebar.toggleSidebar();
+                }}
                 isActive={isActive(item)}
                 render={<Link to={item.to} />}
               >
