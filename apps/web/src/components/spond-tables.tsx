@@ -451,7 +451,7 @@ export function MembersTable({
               </EmptyRow>
             ) : (
               pagination.rows.map((member) => (
-                <TableRow key={member.id}>
+                <TableRow key={member.id} className="odd:bg-white/5">
                   <TableCell className="pl-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="size-7">
@@ -555,7 +555,7 @@ function SubGroupsTable({
             <EmptyRow colSpan={3}>Ingen undergrupper</EmptyRow>
           ) : (
             subGroups.map((s) => (
-              <TableRow key={s.id}>
+              <TableRow key={s.id} className="odd:bg-white/5">
                 <TableCell className="pl-4">
                   <div className="flex items-center gap-2 font-medium">
                     <span
@@ -583,6 +583,69 @@ function SubGroupsTable({
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function DesktopTabsList({ data }: { data: SpondOverview }) {
+  const upcomingCount = data.stats.upcomingEvents;
+  return (
+    <TabsList className="**:data-[slot=badge]:size-5 hidden md:block **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
+      <TabsTrigger value="events">
+        Arrangementer{" "}
+        {upcomingCount > 0 && (
+          <Badge variant="secondary">{upcomingCount}</Badge>
+        )}
+      </TabsTrigger>
+      <TabsTrigger value="members">
+        Medlemmer <Badge variant="secondary">{data.members.length}</Badge>
+      </TabsTrigger>
+      <TabsTrigger value="subgroups">
+        Undergrupper <Badge variant="secondary">{data.subGroups.length}</Badge>
+      </TabsTrigger>
+    </TabsList>
+  );
+}
+
+function MobileTabsSelect({
+  data,
+  value,
+  onChange,
+}: {
+  data: SpondOverview;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const upcomingCount = data.stats.upcomingEvents;
+  const options = [
+    {
+      value: "events",
+      label: `Arrangementer${upcomingCount > 0 ? ` (${upcomingCount})` : ""}`,
+    },
+    {
+      value: "members",
+      label: `Medlemmer (${data.members.length})`,
+    },
+    {
+      value: "subgroups",
+      label: `Undergrupper (${data.subGroups.length})`,
+    },
+  ];
+
+  const selectedLabel = options.find((option) => option.value === value)?.label;
+
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger size="sm" className="w-44 md:hidden">
+        <SelectValue>{selectedLabel ?? "Velg visning"}</SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
