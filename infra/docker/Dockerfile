@@ -17,8 +17,8 @@ ENV NODE_ENV=production
 COPY --from=builder /app /app
 
 ENV HOST=0.0.0.0
-ENV PORT=3001
-EXPOSE 3001
+ENV PORT=3000
+EXPOSE 3000
 
 # SSR chunks require workspace dependencies at runtime
 WORKDIR /app/apps/web
