@@ -631,7 +631,12 @@ function MobileTabsSelect({
   const selectedLabel = options.find((option) => option.value === value)?.label;
 
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select
+      value={value}
+      onValueChange={(value) => {
+        if (value) onChange(value);
+      }}
+    >
       <SelectTrigger size="sm" className="w-44 md:hidden">
         <SelectValue>{selectedLabel ?? "Velg visning"}</SelectValue>
       </SelectTrigger>
@@ -671,7 +676,11 @@ export function SpondTables({
     >
       <div className="flex md:flex-row flex-wrap items-center md:justify-between gap-2 px-4 lg:px-6">
         <DesktopTabsList data={data} />
-        <MobileTabsSelect data={data} value={tab} onChange={onTabChange} />
+        <MobileTabsSelect
+          data={data}
+          value={tab}
+          onChange={(value) => onTabChange(value as TableTab)}
+        />
         {tab === "events" && (
           <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
         )}
