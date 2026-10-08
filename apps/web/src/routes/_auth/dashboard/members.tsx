@@ -2,9 +2,20 @@ import { MemberSectionCards } from "@/components/members-section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { MembersTable } from "@/components/spond-tables";
 import { useTRPC } from "@/utils/trpc";
+import { Button } from "@sporty/ui/components/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@sporty/ui/components/select";
 import { Skeleton } from "@sporty/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { LinkIcon } from "lucide-react";
+import { useState } from "react";
 import z from "zod";
 
 const searchSchema = z.object({
@@ -25,6 +36,9 @@ function RouteComponent() {
     trpc.spond.overview.queryOptions({ groupId: search.group }),
   );
   const data = overview.data;
+
+  const [subgroupId, setSubgroupId] = useState<string | undefined>();
+
   return (
     <>
       <SiteHeader
@@ -44,8 +58,45 @@ function RouteComponent() {
             <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 md:px-6">
               <MemberSectionCards stats={data.stats} />
               {/* TODO: Add filtering by subgroup */}
+              <div className="inline-flex gap-2 w-full">
+                <Select
+                  value={subgroupId}
+                  onValueChange={(v) => setSubgroupId(v ?? undefined)}
+                >
+                  <SelectTrigger className="min-w-40">
+                    <SelectValue>
+                      {subgroupId
+                        ? overview.data.subGroups.find(
+                            (s) => s.id === subgroupId,
+                          )?.name
+                        : "Velg undergruppe"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}>Ingen Undergruppe</SelectItem>
+                    {data.subGroups.map((subGroup) => (
+                      <SelectItem key={subGroup.id} value={subGroup.id}>
+                        {subGroup.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {data.viewer.canManagePeople && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    nativeButton={false}
+                    className={"h-full"}
+                    render={<Link to="/admin" />}
+                  >
+                    <LinkIcon />
+                    <span className="hidden lg:inline">Koble brukere</span>
+                  </Button>
+                )}
+              </div>
               <MembersTable
                 members={data.members}
+                subGroupId={subgroupId}
                 canManagePeople={data.viewer.canManagePeople}
               />
             </div>
