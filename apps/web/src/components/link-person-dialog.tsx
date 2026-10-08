@@ -53,12 +53,15 @@ export function LinkPersonDialog({
 		roster.data?.status === "ok" ? roster.data.members : null;
 	const selected = rosterMembers?.find((m) => m.id === tihldeUserId);
 
-	React.useEffect(() => {
+	// Fill the form each time the dialog is opened for a target.
+	const [prevTarget, setPrevTarget] = React.useState(target);
+	if (target !== prevTarget) {
+		setPrevTarget(target);
 		if (target) {
 			setEmail(target.tihldeEmail ?? "");
 			setTihldeUserId(target.tihldeUserId ?? NONE);
 		}
-	}, [target]);
+	}
 
 	const onSuccess = (message: string) => {
 		toast.success(message);

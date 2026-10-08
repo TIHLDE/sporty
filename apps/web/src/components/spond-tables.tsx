@@ -40,6 +40,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import * as React from "react";
 
+import { useNow } from "@/hooks/use-now";
 import { formatDate, formatDateTime, formatPercent } from "@/lib/format";
 import { type SpondOverview, useTRPC } from "@/utils/trpc";
 
@@ -129,6 +130,7 @@ function EmptyRow({
 }
 
 function EventStatus({ event }: { event: SpondOverview["events"][number] }) {
+  const now = useNow();
   if (event.cancelled) {
     return (
       <Badge variant="outline" className="px-1.5 text-muted-foreground">
@@ -137,7 +139,7 @@ function EventStatus({ event }: { event: SpondOverview["events"][number] }) {
       </Badge>
     );
   }
-  if (new Date(event.end).getTime() < Date.now()) {
+  if (new Date(event.end).getTime() < now) {
     return (
       <Badge variant="outline" className="px-1.5 text-muted-foreground">
         <CircleCheckIcon className="fill-green-500 dark:fill-green-400" />
@@ -197,15 +199,15 @@ function EventsTable({
   filter: EventFilter;
   onOpen: (eventId: string) => void;
 }) {
+  const now = useNow();
   const filtered = React.useMemo(() => {
-    const now = Date.now();
     const list = events.filter((e) => {
       const ended = new Date(e.end).getTime() < now;
       return filter === "all" || (filter === "past" ? ended : !ended);
     });
     // Most relevant first: soonest upcoming, or most recent past.
     return filter === "upcoming" ? list : [...list].reverse();
-  }, [events, filter]);
+  }, [events, filter, now]);
   const pagination = usePagination(filtered);
 
   return (
@@ -629,7 +631,12 @@ function MobileTabsSelect({
   const selectedLabel = options.find((option) => option.value === value)?.label;
 
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select
+      value={value}
+      onValueChange={(value) => {
+        if (value) onChange(value);
+      }}
+    >
       <SelectTrigger size="sm" className="w-44 md:hidden">
         <SelectValue>{selectedLabel ?? "Velg visning"}</SelectValue>
       </SelectTrigger>
@@ -669,7 +676,11 @@ export function SpondTables({
     >
       <div className="flex md:flex-row flex-wrap items-center md:justify-between gap-2 px-4 lg:px-6">
         <DesktopTabsList data={data} />
-        <MobileTabsSelect data={data} value={tab} onChange={onTabChange} />
+        <MobileTabsSelect
+          data={data}
+          value={tab}
+          onChange={(value) => onTabChange(value as TableTab)}
+        />
         {tab === "events" && (
           <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
         )}
@@ -702,11 +713,14 @@ export function SpondTables({
               href="https://spond.com/client/"
               target="_blank"
               rel="noreferrer"
+              aria-labelledby="spond-link-labelby"
             />
           }
         >
           <ExternalLinkIcon />
-          <span className=" lg:inline">Åpne i Spond</span>
+          <span className=" lg:inline" id="spond-link-labelby">
+            Åpne i Spond
+          </span>
         </Button>
       </div>
       <TabsContent
