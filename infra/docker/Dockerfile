@@ -1,8 +1,11 @@
-FROM oven/bun:1 AS builder
+FROM oven/bun:1.3.14 AS builder
 WORKDIR /app
 
 COPY . .
 RUN --mount=type=secret,id=web_env,target=/app/.env --mount=type=cache,target=/root/.bun/install/cache bun install
+
+# prisma/generated is gitignored; the build imports it. generate never connects, but prisma.config.ts requires DATABASE_URL to be set.
+RUN DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder bun run --cwd packages/db db:generate
 
 ENV NODE_ENV=production
 RUN --mount=type=secret,id=web_env,target=/app/.env cd apps/web && bun run build
