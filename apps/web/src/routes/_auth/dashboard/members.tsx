@@ -58,7 +58,6 @@ function RouteComponent() {
           ) : (
             <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 md:px-6">
               <MemberSectionCards stats={data.stats} />
-              {/* TODO: Add filtering by subgroup */}
               <div className="inline-flex gap-2 w-full">
                 <Select
                   value={subgroupId}
