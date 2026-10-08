@@ -8,6 +8,7 @@
 		"react/exhaustive-deps": "warn",
 		"react/react-in-jsx-scope": "off",
 		"react/self-closing-comp": "error",
+		"jsx-a11y/prefer-tag-over-role": "off",
 		"no-param-reassign": "error",
 		"default-param-last": "error",
 		"no-else-return": "error",

@@ -41,6 +41,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   href="https://spond.com/client/"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="Nytt arrangement"
                 />
               }
             >
@@ -57,6 +58,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   href="https://spond.com/client/chat"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="Chat i Spond"
                 />
               }
             >

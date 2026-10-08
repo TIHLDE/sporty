@@ -22,6 +22,7 @@ function HomeComponent() {
 	React.useEffect(() => {
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 		// Fewer balls on narrow screens, so the pile doesn't bury the text.
+		// oxlint-disable-next-line react/set-state-in-effect -- client-only value; a lazy initializer would break SSR hydration.
 		setBallCount(window.innerWidth < 640 ? 45 : 100);
 	}, []);
 
