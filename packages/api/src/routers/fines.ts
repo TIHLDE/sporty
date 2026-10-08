@@ -64,7 +64,7 @@ export const finesRouter = router({
 	overview: protectedProcedure
 		.input(z.object({ groupId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			const settings = await ctx.db.spondGroupSettings.findUnique({
 				where: { spondGroupId: group.id },
 			});

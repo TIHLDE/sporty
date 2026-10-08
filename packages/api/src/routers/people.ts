@@ -22,7 +22,7 @@ export const peopleRouter = router({
 	 * Administrators and sub-administrators only.
 	 */
 	list: protectedProcedure.input(groupInput).query(async ({ ctx, input }) => {
-		const group = await getGroup(ctx.spond, input.groupId);
+		const group = await getGroup(ctx, input.groupId);
 		await requirePeopleManager(ctx.db, ctx.session, group);
 		await syncPeople(ctx.db, group);
 
@@ -66,7 +66,7 @@ export const peopleRouter = router({
 
 	/** The Spond member the current TIHLDE user is linked to, if any. */
 	me: protectedProcedure.input(groupInput).query(async ({ ctx, input }) => {
-		const group = await getGroup(ctx.spond, input.groupId);
+		const group = await getGroup(ctx, input.groupId);
 		const viewer = await getViewer(ctx.db, ctx.session, group);
 		if (!viewer.member) return null;
 		return ctx.db.person.findUnique({
@@ -84,7 +84,7 @@ export const peopleRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			return linkPerson(ctx.db, group, {
 				memberId: input.memberId,
@@ -98,7 +98,7 @@ export const peopleRouter = router({
 	unlink: protectedProcedure
 		.input(groupInput.extend({ memberId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			await unlinkPerson(ctx.db, group, input.memberId);
 		}),
@@ -107,7 +107,7 @@ export const peopleRouter = router({
 	settings: protectedProcedure
 		.input(groupInput)
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const settings = await getFineSettings(ctx.db, group.id);
 
@@ -145,7 +145,7 @@ export const peopleRouter = router({
 	setTihldeGroup: protectedProcedure
 		.input(groupInput.extend({ tihldeGroupSlug: z.string().nullable() }))
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const current = await ctx.db.spondGroupSettings.findUnique({
 				where: { spondGroupId: group.id },
@@ -181,7 +181,7 @@ export const peopleRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const { groupId: _groupId, ...fineSettings } = input;
 			const data = { ...fineSettings, updatedById: ctx.session.user.id };
@@ -199,7 +199,7 @@ export const peopleRouter = router({
 	tihldeMembers: protectedProcedure
 		.input(groupInput)
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const settings = await ctx.db.spondGroupSettings.findUnique({
 				where: { spondGroupId: group.id },

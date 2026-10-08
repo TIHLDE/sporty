@@ -9,7 +9,12 @@ import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 import { getViewer, syncPeople } from "../people";
-import { cached, getGroup, getGroupEvents, getGroups } from "../spond-cache";
+import {
+	cached,
+	getGroup,
+	getGroupEvents,
+	getVisibleGroups,
+} from "../spond-cache";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -41,18 +46,22 @@ function attendanceRate(events: SpondEvent[]): number | null {
 
 export const spondRouter = router({
 	groups: protectedProcedure.query(async ({ ctx }) => {
-		const groups = await getGroups(ctx.spond);
+		const groups = await getVisibleGroups(ctx);
 		return groups.map((g) => ({
 			id: g.id,
 			name: g.name,
+			activity: g.activity ?? null,
+			imageUrl: g.imageUrl ?? null,
 			memberCount: g.members.length,
+			subGroupCount: g.subGroups.length,
+			selected: g.id === ctx.selectedGroupId,
 		}));
 	}),
 
 	overview: protectedProcedure
 		.input(z.object({ groupId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			const now = Date.now();
 
 			const events = await getGroupEvents(ctx.spond, group.id);
@@ -137,6 +146,7 @@ export const spondRouter = router({
 					id: group.id,
 					name: group.name,
 					activity: group.activity ?? null,
+					imageUrl: group.imageUrl ?? null,
 				},
 				viewer: {
 					canManagePeople: viewer.canManagePeople,
@@ -211,7 +221,7 @@ export const spondRouter = router({
 	event: protectedProcedure
 		.input(z.object({ groupId: z.string().optional(), eventId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			const notFound = new TRPCError({
 				code: "NOT_FOUND",
 				message: "Fant ikke arrangementet",
