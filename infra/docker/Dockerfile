@@ -12,6 +12,8 @@ RUN --mount=type=secret,id=web_env,target=/app/.env cd apps/web && bun run build
 ENV DATABASE_URL=
 
 FROM node:24-slim AS runner
+# Prisma's schema engine needs openssl to detect the platform; slim ships without it.
+RUN apt-get update -y && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app /app
