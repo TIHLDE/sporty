@@ -11,10 +11,11 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { CirclePlusIcon, MessageCircleIcon } from "lucide-react";
 
 import type { TableTab } from "@/components/spond-tables";
+import type { FileRouteTypes } from "@/routeTree.gen";
 
 export type NavItem = {
   title: string;
-  to: "/dashboard" | "/admin";
+  to: FileRouteTypes["to"];
   tab?: TableTab;
   icon?: React.ReactNode;
 };
@@ -74,17 +75,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   sidebar.toggleSidebar();
                 }}
                 isActive={isActive(item)}
-                render={
-                  item.to === "/admin" ? (
-                    <Link to="/admin" />
-                  ) : (
-                    <Link
-                      to="/dashboard"
-                      search={{ tab: item.tab }}
-                      hash={item.tab ? "tables" : undefined}
-                    />
-                  )
-                }
+                render={<Link to={item.to} />}
               >
                 {item.icon}
                 <span>{item.title}</span>

@@ -17,7 +17,7 @@ const searchSchema = z.object({
   event: z.string().optional(),
 });
 
-export const Route = createFileRoute("/_auth/dashboard")({
+export const Route = createFileRoute("/_auth/dashboard/")({
   validateSearch: searchSchema,
   component: RouteComponent,
 });
