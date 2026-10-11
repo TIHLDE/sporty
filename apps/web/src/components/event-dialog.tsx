@@ -145,7 +145,7 @@ function EventContent({ event }: { event: EventDetails }) {
 				{event.description && (
 					<section className="grid gap-2">
 						<h3 className="text-sm font-medium">Beskrivelse</h3>
-						<p className="whitespace-pre-wrap text-sm text-muted-foreground">
+						<p className="text-sm whitespace-pre-wrap text-muted-foreground">
 							{event.description}
 						</p>
 					</section>

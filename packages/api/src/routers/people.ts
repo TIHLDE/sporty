@@ -9,8 +9,8 @@ import {
 	syncPeople,
 	unlinkPerson,
 } from "../people";
-import { getGroup } from "../spond-cache";
 import type { PhotonLaw } from "../photon";
+import { getGroup } from "../spond-cache";
 import { getFineSettings } from "./event-fines";
 import { finesErrorReason, getFineUsers } from "./fines";
 
