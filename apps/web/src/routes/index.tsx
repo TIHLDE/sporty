@@ -58,7 +58,7 @@ function HomeComponent() {
 
 			<div className="pointer-events-none flex h-full flex-col items-center justify-center gap-8 px-4 pb-[20svh] text-center">
 				<div className="grid gap-3">
-					<p className="font-medium text-muted-foreground text-sm uppercase tracking-[0.2em]">
+					<p className="text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase">
 						TIHLDE
 					</p>
 					{/* Hover to see the outlines; letters can be dragged and spring back. */}
@@ -73,7 +73,7 @@ function HomeComponent() {
 							className="pointer-events-auto"
 						/>
 					</h1>
-					<p className="mx-auto max-w-md text-balance text-lg text-muted-foreground">
+					<p className="mx-auto max-w-md text-lg text-balance text-muted-foreground">
 						Spond og botsystemet for lagene dine, samlet på ett sted.
 					</p>
 				</div>
@@ -97,7 +97,7 @@ function HomeComponent() {
 							{signIn.isPending ? "Sender deg til tihlde.org…" : "Logg inn"}
 						</Button>
 					)}
-					<p className="text-muted-foreground text-sm">
+					<p className="text-sm text-muted-foreground">
 						{signIn.isError
 							? signIn.error.message
 							: session

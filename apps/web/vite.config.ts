@@ -10,26 +10,26 @@ import { defineConfig, loadEnv } from "vite";
 const envDir = path.join(import.meta.dirname, "../..");
 
 export default defineConfig(({ mode }) => {
-  // Make server-side env vars from the root .env available on process.env
-  // (Bun's automatic env loading is disabled in bunfig.toml).
-  const env = loadEnv(mode, envDir, "");
-  for (const [key, value] of Object.entries(env)) {
-    process.env[key] ??= value;
-  }
+	// Make server-side env vars from the root .env available on process.env
+	// (Bun's automatic env loading is disabled in bunfig.toml).
+	const env = loadEnv(mode, envDir, "");
+	for (const [key, value] of Object.entries(env)) {
+		process.env[key] ??= value;
+	}
 
-  return {
-    envDir,
-    server: {
-      port: 3001,
-    },
-    resolve: {
-      tsconfigPaths: true,
-    },
-    plugins: [
-      tailwindcss(),
-      tanstackStart(),
-      nitro({ preset: "node-server" }),
-      viteReact(),
-    ],
-  };
+	return {
+		envDir,
+		server: {
+			port: 3001,
+		},
+		resolve: {
+			tsconfigPaths: true,
+		},
+		plugins: [
+			tailwindcss(),
+			tanstackStart(),
+			nitro({ preset: "node-server" }),
+			viteReact(),
+		],
+	};
 });

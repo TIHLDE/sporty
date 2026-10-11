@@ -55,7 +55,9 @@ export function ChartAreaInteractive({
 	const [selectedRange, setSelectedRange] = React.useState<Range | null>(null);
 	const hasRecent = events.some((e) => {
 		const start = new Date(e.start).getTime();
-		return start >= now - ranges["90d"].days * 24 * 60 * 60 * 1000 && start <= now;
+		return (
+			start >= now - ranges["90d"].days * 24 * 60 * 60 * 1000 && start <= now
+		);
 	});
 	const range = selectedRange ?? (hasRecent ? "90d" : "upcoming");
 

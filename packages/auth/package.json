@@ -1,21 +1,21 @@
 {
-  "name": "@sporty/auth",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
-  },
-  "scripts": {
-    "check-types": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@sporty/db": "workspace:*",
-    "better-auth": "catalog:",
-    "zod": "catalog:",
-    "@sporty/spond": "workspace:*"
-  },
-  "devDependencies": {
-    "@sporty/config": "workspace:*",
-    "typescript": "catalog:"
-  }
+	"name": "@sporty/auth",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./*": "./src/*.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@sporty/db": "workspace:*",
+		"@sporty/spond": "workspace:*",
+		"better-auth": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@sporty/config": "workspace:*",
+		"typescript": "catalog:"
+	}
 }
