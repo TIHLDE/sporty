@@ -4,6 +4,7 @@ import type * as React from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { getUser } from "@/functions/get-user";
+import { hasSelectedGroup } from "@/functions/selected-group";
 
 export const Route = createFileRoute("/_auth")({
   component: AuthLayout,
@@ -13,6 +14,11 @@ export const Route = createFileRoute("/_auth")({
       throw redirect({
         to: "/",
       });
+    }
+    // Picking a group is the first step after signing in, and the way back
+    // if the picked group is no longer visible to them.
+    if (!(await hasSelectedGroup())) {
+      throw redirect({ to: "/groups" });
     }
     return { session };
   },

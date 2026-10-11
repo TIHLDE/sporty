@@ -15,4 +15,6 @@ export const ENV = {
   PHOTON_CLIENT_SECRET: process.env.PHOTON_CLIENT_SECRET ?? "",
   SPOND_EMAIL: process.env.SPOND_EMAIL ?? "",
   SPOND_PASSWORD: process.env.SPOND_PASSWORD ?? "",
+  /** Show every Spond group to everyone (development); off in production. */
+  DISPLAY_ALL_GROUPS: process.env.DISPLAY_ALL_GROUPS === "true",
 };
