@@ -26,6 +26,7 @@ import {
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
+import { useNow } from "@/hooks/use-now";
 import { formatDate } from "@/lib/format";
 import type { SpondOverview } from "@/utils/trpc";
 
@@ -50,17 +51,15 @@ export function ChartAreaInteractive({
 	events: SpondOverview["events"];
 }) {
 	// Default to upcoming events if nothing happened in the last three months.
-	const [range, setRange] = React.useState<Range>(() => {
-		const from = Date.now() - ranges["90d"].days * 24 * 60 * 60 * 1000;
-		const hasRecent = events.some((e) => {
-			const start = new Date(e.start).getTime();
-			return start >= from && start <= Date.now();
-		});
-		return hasRecent ? "90d" : "upcoming";
+	const now = useNow();
+	const [selectedRange, setSelectedRange] = React.useState<Range | null>(null);
+	const hasRecent = events.some((e) => {
+		const start = new Date(e.start).getTime();
+		return start >= now - ranges["90d"].days * 24 * 60 * 60 * 1000 && start <= now;
 	});
+	const range = selectedRange ?? (hasRecent ? "90d" : "upcoming");
 
 	const data = React.useMemo(() => {
-		const now = Date.now();
 		const from =
 			range === "upcoming"
 				? now
@@ -86,7 +85,7 @@ export function ChartAreaInteractive({
 			byDay.set(date, point);
 		}
 		return [...byDay.values()].sort((a, b) => a.date.localeCompare(b.date));
-	}, [events, range]);
+	}, [events, range, now]);
 
 	return (
 		<Card className="@container/card">
@@ -103,7 +102,7 @@ export function ChartAreaInteractive({
 						multiple={false}
 						value={[range]}
 						onValueChange={(value) =>
-							setRange((value[0] as Range | undefined) ?? "90d")
+							setSelectedRange((value[0] as Range | undefined) ?? "90d")
 						}
 						variant="outline"
 						spacing={0}
@@ -117,7 +116,7 @@ export function ChartAreaInteractive({
 					</ToggleGroup>
 					<Select
 						value={range}
-						onValueChange={(value) => value && setRange(value as Range)}
+						onValueChange={(value) => value && setSelectedRange(value as Range)}
 					>
 						<SelectTrigger
 							className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"

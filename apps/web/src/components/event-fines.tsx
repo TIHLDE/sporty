@@ -378,17 +378,24 @@ function GiveFinesDialog({
     [event],
   );
 
-  React.useEffect(() => {
-    if (!event) return;
-    setAmount(event.defaultAmount === null ? "" : String(event.defaultAmount));
-    setChosen(new Set(eligible.map((p) => p.memberId)));
-  }, [event, eligible]);
+  // Reset the form each time the dialog is opened for an event.
+  const [prevEvent, setPrevEvent] = React.useState(event);
+  if (event !== prevEvent) {
+    setPrevEvent(event);
+    if (event) {
+      setAmount(event.defaultAmount === null ? "" : String(event.defaultAmount));
+      setChosen(new Set(eligible.map((p) => p.memberId)));
+    }
+  }
 
   // Start from the paragraph in the settings each time the dialog opens.
   const defaultLawId = settings.data?.fineLawId ?? NO_LAW;
-  React.useEffect(() => {
+  const [prevLawKey, setPrevLawKey] = React.useState<string | null>(null);
+  const lawKey = event ? `${event.id}:${defaultLawId}` : null;
+  if (lawKey !== prevLawKey) {
+    setPrevLawKey(lawKey);
     if (event) setLawId(defaultLawId);
-  }, [event, defaultLawId]);
+  }
   const selectedLaw = laws.find((l) => l.id === lawId);
 
   const give = useMutation(
@@ -463,7 +470,6 @@ function GiveFinesDialog({
               min={0}
               max={50}
               required
-              autoFocus
               placeholder="Velg antall"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}

@@ -15,10 +15,11 @@ export const Route = createFileRoute("/_auth/dashboard/events")({
 });
 
 function RouteComponent() {
-  const navigate = Route.useNavigate();
+  const search = Route.useSearch();
   const trpc = useTRPC();
-  const overview = useQuery(trpc.spond.overview.queryOptions({}));
-  const data = overview.data;
+  const overview = useQuery(
+    trpc.spond.overview.queryOptions({ groupId: search.group }),
+  );
   return (
     <>
       <SiteHeader

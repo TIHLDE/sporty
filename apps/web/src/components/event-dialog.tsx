@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 
+import { useNow } from "@/hooks/use-now";
 import { formatDateTime, formatLongDate, formatTime } from "@/lib/format";
 import { type RouterOutputs, useTRPC } from "@/utils/trpc";
 
@@ -81,7 +82,8 @@ export function EventDialog({
 
 function EventContent({ event }: { event: EventDetails }) {
 	const { match, location } = event;
-	const past = new Date(event.end ?? event.start).getTime() < Date.now();
+	const now = useNow();
+	const past = new Date(event.end ?? event.start).getTime() < now;
 
 	return (
 		<>
@@ -176,7 +178,12 @@ function EventContent({ event }: { event: EventDetails }) {
 						size="sm"
 						nativeButton={false}
 						render={
-							<a href={event.spondUrl} target="_blank" rel="noreferrer" />
+							<a
+								href={event.spondUrl}
+								target="_blank"
+								rel="noreferrer"
+								aria-label="Åpne i Spond"
+							/>
 						}
 					>
 						<ExternalLinkIcon />
@@ -277,7 +284,14 @@ function LocationMap({
 					variant="outline"
 					size="sm"
 					nativeButton={false}
-					render={<a href={mapsUrl} target="_blank" rel="noreferrer" />}
+					render={
+						<a
+							href={mapsUrl}
+							target="_blank"
+							rel="noreferrer"
+							aria-label="Åpne i kart"
+						/>
+					}
 				>
 					<MapPinIcon />
 					Åpne i kart
@@ -286,7 +300,14 @@ function LocationMap({
 					variant="outline"
 					size="sm"
 					nativeButton={false}
-					render={<a href={directionsUrl} target="_blank" rel="noreferrer" />}
+					render={
+						<a
+							href={directionsUrl}
+							target="_blank"
+							rel="noreferrer"
+							aria-label="Veibeskrivelse"
+						/>
+					}
 				>
 					<NavigationIcon />
 					Veibeskrivelse
