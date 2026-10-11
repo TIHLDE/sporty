@@ -28,6 +28,13 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ---
 
+## 2026-10-08
+
+### ✨ Feature
+
+- Lagt til CI
+- Laget `/dashboard/members`-siden
+
 ## 2026-10-05
 
 ### ♻️ Endret

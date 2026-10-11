@@ -386,14 +386,16 @@ function FinesCell({
   );
 }
 
-function MembersTable({
+export function MembersTable({
   members,
   subGroupId,
   canManagePeople,
+  search,
 }: {
   members: SpondOverview["members"];
   subGroupId?: string;
   canManagePeople: boolean;
+  search?: string;
 }) {
   const filtered = React.useMemo(
     () =>
@@ -402,8 +404,11 @@ function MembersTable({
         : members
       )
         .slice()
+        .filter((m) =>
+          m.name.toLowerCase().includes(search?.trim().toLowerCase() ?? ""),
+        )
         .sort((a, b) => a.name.localeCompare(b.name, "nb")),
-    [members, subGroupId],
+    [members, subGroupId, search],
   );
   const pagination = usePagination(filtered);
   const trpc = useTRPC();
@@ -666,6 +671,7 @@ export function SpondTables({
   onSubGroupChange: (id?: string) => void;
   onEventOpen: (eventId: string) => void;
 }) {
+  const upcomingCount = data.stats.upcomingEvents;
   const [eventFilter, setEventFilter] = React.useState<EventFilter>("upcoming");
 
   return (
@@ -674,54 +680,62 @@ export function SpondTables({
       onValueChange={(value) => onTabChange(value as TableTab)}
       className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex md:flex-row flex-wrap items-center md:justify-between gap-2 px-4 lg:px-6">
-        <DesktopTabsList data={data} />
-        <MobileTabsSelect
-          data={data}
-          value={tab}
-          onChange={(value) => onTabChange(value as TableTab)}
-        />
-        {tab === "events" && (
-          <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
-        )}
-        {tab === "members" && (
-          <>
-            {data.viewer.canManagePeople && (
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={<Link to="/admin" />}
-              >
-                <LinkIcon />
-                <span className="lg:inline">Koble brukere</span>
-              </Button>
+      <div className="flex items-center justify-between px-4 lg:px-6">
+        <TabsList className="**:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
+          <TabsTrigger value="events">
+            Arrangementer{" "}
+            {upcomingCount > 0 && (
+              <Badge variant="secondary">{upcomingCount}</Badge>
             )}
-            <SubGroupSelect
-              subGroups={data.subGroups}
-              value={subGroupId}
-              onChange={onSubGroupChange}
-            />
-          </>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          nativeButton={false}
-          render={
-            <a
-              href="https://spond.com/client/"
-              target="_blank"
-              rel="noreferrer"
-              aria-labelledby="spond-link-labelby"
-            />
-          }
-        >
-          <ExternalLinkIcon />
-          <span className=" lg:inline" id="spond-link-labelby">
-            Åpne i Spond
-          </span>
-        </Button>
+          </TabsTrigger>
+          <TabsTrigger value="members">
+            Medlemmer <Badge variant="secondary">{data.members.length}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="subgroups">
+            Undergrupper{" "}
+            <Badge variant="secondary">{data.subGroups.length}</Badge>
+          </TabsTrigger>
+        </TabsList>
+        <div className="flex items-center gap-2">
+          {tab === "events" && (
+            <EventFilterSelect value={eventFilter} onChange={setEventFilter} />
+          )}
+          {tab === "members" && (
+            <>
+              {data.viewer.canManagePeople && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link to="/admin" />}
+                >
+                  <LinkIcon />
+                  <span className="hidden lg:inline">Koble brukere</span>
+                </Button>
+              )}
+              <SubGroupSelect
+                subGroups={data.subGroups}
+                value={subGroupId}
+                onChange={onSubGroupChange}
+              />
+            </>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={
+              <a
+                href="https://spond.com/client/"
+                target="_blank"
+                rel="noreferrer"
+              />
+            }
+          >
+            <ExternalLinkIcon />
+            <span className="hidden lg:inline">Åpne i Spond</span>
+          </Button>
+        </div>
       </div>
       <TabsContent
         value="events"
