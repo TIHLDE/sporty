@@ -13,6 +13,14 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@sporty/ui/components/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@sporty/ui/components/dialog";
 import { Input } from "@sporty/ui/components/input";
 import {
 	Select,
@@ -34,10 +42,12 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+	BugIcon,
 	CheckIcon,
 	CircleCheckIcon,
 	InboxIcon,
 	LinkIcon,
+	LightbulbIcon,
 	PencilIcon,
 	ScaleIcon,
 	SearchIcon,
@@ -54,7 +64,7 @@ import {
 	type LinkTarget,
 } from "@/components/link-person-dialog";
 import { SiteHeader } from "@/components/site-header";
-import { formatDate, formatPercent } from "@/lib/format";
+import { formatDate, formatDateTime, formatPercent } from "@/lib/format";
 import { type RouterOutputs, useTRPC } from "@/utils/trpc";
 
 type Person = RouterOutputs["people"]["list"][number];
@@ -209,6 +219,7 @@ function PeopleAdmin({ people }: { people: Person[] }) {
 			<div className="grid gap-4 px-4 lg:px-6">
 				<FinesSettings />
 				<EventFinesCard />
+				<ReportsCard />
 			</div>
 
 			<div className="flex flex-col gap-4 px-4 lg:px-6">
@@ -629,5 +640,164 @@ function AdminSkeleton() {
 			<Skeleton className="h-8 w-72" />
 			<Skeleton className="h-64 rounded-xl" />
 		</div>
+	);
+}
+
+type Report = RouterOutputs["reports"]["list"][number];
+type ReportStatus = Report["status"];
+
+const statusLabels: Record<ReportStatus, string> = {
+	OPEN: "Åpen",
+	CLOSED: "Lukket",
+	REJECTED: "Avslått",
+};
+
+function ReportsCard() {
+	const trpc = useTRPC();
+	const queryClient = useQueryClient();
+	const reports = useQuery(trpc.reports.list.queryOptions());
+	const setStatus = useMutation(
+		trpc.reports.setStatus.mutationOptions({
+			onSuccess: () => {
+				toast.success("Status oppdatert");
+				queryClient.invalidateQueries({
+					queryKey: trpc.reports.list.queryKey(),
+				});
+			},
+			onError: (error) => toast.error(error.message),
+		}),
+	);
+
+	const rows = reports.data ?? [];
+	const openCount = rows.filter((r) => r.status === "OPEN").length;
+
+	return (
+		<Card className="@container/card">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<BugIcon className="size-4" />
+					Feil og idéer
+				</CardTitle>
+				<CardDescription>
+					Innsendte feilrapporter og forslag fra brukere.
+					{openCount > 0 && ` ${openCount} åpen${openCount === 1 ? "" : "e"}.`}
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				{reports.isPending ? (
+					<Skeleton className="h-40 rounded-lg" />
+				) : rows.length === 0 ? (
+					<p className="py-8 text-center text-sm text-muted-foreground">
+						Ingen innmeldinger ennå.
+					</p>
+				) : (
+					<div className="overflow-hidden rounded-lg border">
+						<Table>
+							<TableHeader className="sticky top-0 z-10 bg-muted">
+								<TableRow>
+									<TableHead className="pl-4">Melding</TableHead>
+									<TableHead>Type</TableHead>
+									<TableHead className="pr-4 text-right">Status</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{rows.map((report) => (
+									<ReportRow
+										key={report.id}
+										report={report}
+										disabled={setStatus.isPending}
+										onStatusChange={(status) =>
+											status !== report.status &&
+											setStatus.mutate({ id: report.id, status })
+										}
+									/>
+								))}
+							</TableBody>
+						</Table>
+					</div>
+				)}
+			</CardContent>
+			{rows.length > 0 && (
+				<CardFooter className="text-sm text-muted-foreground">
+					{rows.length} innmelding{rows.length === 1 ? "" : "er"}
+				</CardFooter>
+			)}
+		</Card>
+	);
+}
+
+function ReportRow({
+	report,
+	disabled,
+	onStatusChange,
+}: {
+	report: Report;
+	disabled: boolean;
+	onStatusChange: (status: ReportStatus) => void;
+}) {
+	return (
+		<TableRow>
+			<TableCell className="pl-4">
+				<Dialog>
+					<DialogTrigger
+						className="text-left font-medium hover:underline focus-visible:underline focus-visible:outline-none"
+						title={report.title}
+					>
+						<span className="line-clamp-1 max-w-md">{report.title}</span>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle className="flex items-start gap-2">
+								{report.type === "BUG" ? (
+									<BugIcon className="mt-0.5 size-5 shrink-0" />
+								) : (
+									<LightbulbIcon className="mt-0.5 size-5 shrink-0 text-amber-500" />
+								)}
+								{report.title}
+							</DialogTitle>
+							<DialogDescription>
+								{report.type === "BUG" ? "Feilrapport" : "Forslag"} ·{" "}
+								{formatDateTime(report.createdAt)}
+							</DialogDescription>
+						</DialogHeader>
+						<p className="text-sm whitespace-pre-wrap">{report.description}</p>
+					</DialogContent>
+				</Dialog>
+				<div className="text-xs text-muted-foreground">
+					{formatDate(report.createdAt)}
+				</div>
+			</TableCell>
+			<TableCell>
+				<Badge variant="outline" className="px-1.5 text-muted-foreground">
+					{report.type === "BUG" ? (
+						<>
+							<BugIcon /> Feil
+						</>
+					) : (
+						<>
+							<LightbulbIcon className="text-amber-500" /> Forslag
+						</>
+					)}
+				</Badge>
+			</TableCell>
+			<TableCell className="pr-4 text-right">
+				<Select
+					value={report.status}
+					disabled={disabled}
+					onValueChange={(v) => v && onStatusChange(v as ReportStatus)}
+				>
+					<SelectTrigger size="sm" className="ml-auto w-32">
+						<SelectValue>{statusLabels[report.status]}</SelectValue>
+					</SelectTrigger>
+					<SelectContent>
+						{Object.entries(statusLabels).map(([value, label]) => (
+							<SelectItem key={value} value={value}>
+								{label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</TableCell>
+		</TableRow>
 	);
 }

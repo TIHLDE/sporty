@@ -2,6 +2,7 @@ import { protectedProcedure, publicProcedure, router } from "../index";
 import { eventFinesRouter } from "./event-fines";
 import { finesRouter } from "./fines";
 import { peopleRouter } from "./people";
+import { reportsRouter } from "./reports";
 import { spondRouter } from "./spond";
 
 export const appRouter = router({
@@ -18,5 +19,6 @@ export const appRouter = router({
 	people: peopleRouter,
 	fines: finesRouter,
 	eventFines: eventFinesRouter,
+	reports: reportsRouter,
 });
 export type AppRouter = typeof appRouter;
