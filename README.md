@@ -122,6 +122,7 @@ sporty/
 
 - `bun run dev`: Start the database container and all applications in development mode
 - `bun run build`: Build all applications
+- `bun run cut-release`: Push til prod
 - `bun run check-types`: Check TypeScript types across all apps
 - `bun run lint` / `bun run lint:fix`: Run Oxlint
 - `bun run format` / `bun run format:fix`: Check or apply Oxfmt formatting
