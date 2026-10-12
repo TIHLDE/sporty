@@ -1,8 +1,5 @@
 import { getViewer } from "@sporty/api/people";
-import {
-	getVisibleGroups,
-	SELECTED_GROUP_COOKIE,
-} from "@sporty/api/spond-cache";
+import { getGroups, SELECTED_GROUP_COOKIE } from "@sporty/api/spond-cache";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
@@ -10,7 +7,7 @@ import { z } from "zod";
 import { createContext } from "@/context";
 
 export type AccessState =
-	/** No group picked on /groups, or the picked group is no longer visible. */
+	/** No group picked on /groups, or the picked group no longer exists. */
 	| "no-group"
 	/** Not linked to a Spond member in the picked group yet. */
 	| "unlinked"
@@ -24,7 +21,7 @@ export const getAccessState = createServerFn({ method: "GET" }).handler(
 	async (): Promise<AccessState> => {
 		const ctx = await createContext({ req: getRequest() });
 		if (!ctx.selectedGroupId) return "no-group";
-		const groups = await getVisibleGroups(ctx);
+		const groups = await getGroups(ctx.spond);
 		const group = groups.find((g) => g.id === ctx.selectedGroupId);
 		if (!group) return "no-group";
 		const viewer = await getViewer(ctx.db, ctx.session, group);

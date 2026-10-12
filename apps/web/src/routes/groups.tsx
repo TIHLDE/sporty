@@ -86,8 +86,8 @@ function GroupsComponent() {
 					</p>
 					<h1 className="text-3xl font-semibold tracking-tight">Velg gruppe</h1>
 					<p className="text-balance text-muted-foreground">
-						Statistikk, medlemmer og bøter vises for gruppen du velger. Du kan
-						bytte senere fra menyen.
+						Velg laget ditt. Første gang kobler du TIHLDE-brukeren din til
+						Spond-medlemmet ditt. Du kan bytte gruppe senere fra menyen.
 					</p>
 				</div>
 
@@ -107,11 +107,10 @@ function GroupsComponent() {
 							<EmptyMedia variant="icon">
 								<UsersIcon />
 							</EmptyMedia>
-							<EmptyTitle>Du er ikke medlem av noen grupper</EmptyTitle>
+							<EmptyTitle>Ingen grupper ennå</EmptyTitle>
 							<EmptyDescription>
-								Vi fant deg ikke i noen av lagene på Spond. Er du med på et lag,
-								be en administrator om å koble TIHLDE-brukeren din til Spond,
-								eller laget til TIHLDE-gruppen sin.
+								Sporty er ikke lagt til i noen lag på Spond ennå. Be lagets
+								administrator om å legge til Sporty-kontoen i Spond-gruppen.
 							</EmptyDescription>
 						</EmptyHeader>
 					</Empty>
@@ -142,6 +141,9 @@ function GroupsComponent() {
 												</span>
 												{group.selected && (
 													<Badge variant="secondary">Valgt</Badge>
+												)}
+												{!group.linked && (
+													<Badge variant="outline">Ikke koblet</Badge>
 												)}
 											</span>
 											<span className="text-sm text-muted-foreground">

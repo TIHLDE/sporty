@@ -18,7 +18,7 @@ import {
 	unlinkPerson,
 } from "../people";
 import type { PhotonLaw } from "../photon";
-import { getGroup } from "../spond-cache";
+import { getGroup, getGroupForLinking } from "../spond-cache";
 import { getFineSettings } from "./event-fines";
 import { finesErrorReason, getFineUsers } from "./fines";
 
@@ -136,7 +136,7 @@ export const peopleRouter = router({
 	unlinkedMembers: protectedProcedure
 		.input(groupInput)
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			await syncPeople(ctx.db, group);
 			const linked = await ctx.db.person.findMany({
 				where: {
@@ -166,7 +166,7 @@ export const peopleRouter = router({
 	myLinkRequest: protectedProcedure
 		.input(groupInput)
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			const tihlde = await getTihldeIdentity(ctx.db, ctx.session);
 			if (!tihlde) return null;
 			const request = await ctx.db.personLinkRequest.findUnique({
@@ -196,7 +196,7 @@ export const peopleRouter = router({
 	requestLink: protectedProcedure
 		.input(groupInput.extend({ memberId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			const { tihlde } = await requireLinkable(ctx, group, input.memberId);
 
 			const data = {
@@ -229,7 +229,7 @@ export const peopleRouter = router({
 	sendLinkCode: protectedProcedure
 		.input(groupInput.extend({ memberId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			const { tihlde, member } = await requireLinkable(
 				ctx,
 				group,
@@ -321,7 +321,7 @@ export const peopleRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			const { tihlde } = await requireLinkable(ctx, group, input.memberId);
 			const key = {
 				spondGroupId_tihldeUserId: {
@@ -375,7 +375,7 @@ export const peopleRouter = router({
 	cancelLinkRequest: protectedProcedure
 		.input(groupInput)
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx, input.groupId);
+			const group = await getGroupForLinking(ctx, input.groupId);
 			const tihlde = await requireTihldeIdentity(ctx.db, ctx.session);
 			await ctx.db.personLinkRequest.deleteMany({
 				where: { spondGroupId: group.id, tihldeUserId: tihlde.userId },

@@ -30,6 +30,18 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ## 2026-10-12
 
+### 🐛 Fix
+
+- Brukere som ikke var koblet til Spond fant ingen grupper på `/groups` og kom derfor aldri til `/link-spond`. Alle Spond-gruppene vises nå, merket «Ikke koblet» der man ikke er koblet
+
+### 🔒 Sikkerhet
+
+- API-et krever nå at man er koblet til Spond-medlemmet sitt i gruppen for å hente data om den; bare det koblingssiden trenger er åpent for ukoblede
+
+### 🗑️ Fjernet
+
+- Miljøvariabelen `DISPLAY_ALL_GROUPS`, siden alle grupper nå kan velges
+
 ### ✨ Feature
 
 - Ny side `/link-spond`: brukere kobler seg selv til Spond-medlemmet sitt ved å bekrefte en kode sendt til e-posten de har i Spond

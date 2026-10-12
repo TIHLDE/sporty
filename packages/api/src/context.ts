@@ -17,6 +17,4 @@ export type Context = {
 	mailer: Mailer | null;
 	/** The Spond group picked on /groups, from its cookie. */
 	selectedGroupId: string | null;
-	/** Show every group the Spond account is in, not just the viewer's own. */
-	displayAllGroups: boolean;
 };

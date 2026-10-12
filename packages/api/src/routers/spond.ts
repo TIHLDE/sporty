@@ -9,12 +9,7 @@ import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 import { getViewer, syncPeople } from "../people";
-import {
-	cached,
-	getGroup,
-	getGroupEvents,
-	getVisibleGroups,
-} from "../spond-cache";
+import { cached, getGroup, getGroupEvents, getGroups } from "../spond-cache";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -46,16 +41,24 @@ function attendanceRate(events: SpondEvent[]): number | null {
 
 export const spondRouter = router({
 	groups: protectedProcedure.query(async ({ ctx }) => {
-		const groups = await getVisibleGroups(ctx);
-		return groups.map((g) => ({
-			id: g.id,
-			name: g.name,
-			activity: g.activity ?? null,
-			imageUrl: g.imageUrl ?? null,
-			memberCount: g.members.length,
-			subGroupCount: g.subGroups.length,
-			selected: g.id === ctx.selectedGroupId,
-		}));
+		// Every group can be picked, so people can find their team and link
+		// themselves; the dashboard only opens for groups they are linked in.
+		const groups = await getGroups(ctx.spond);
+		const viewers = await Promise.all(
+			groups.map((g) => getViewer(ctx.db, ctx.session, g)),
+		);
+		return groups
+			.map((g, i) => ({
+				id: g.id,
+				name: g.name,
+				activity: g.activity ?? null,
+				imageUrl: g.imageUrl ?? null,
+				memberCount: g.members.length,
+				subGroupCount: g.subGroups.length,
+				selected: g.id === ctx.selectedGroupId,
+				linked: Boolean(viewers[i]?.member),
+			}))
+			.sort((a, b) => Number(b.linked) - Number(a.linked));
 	}),
 
 	overview: protectedProcedure

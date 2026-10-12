@@ -21,6 +21,4 @@ export const ENV = {
 	SMTP_USER: process.env.SMTP_USER ?? "",
 	SMTP_PASSWORD: process.env.SMTP_PASSWORD ?? "",
 	SMTP_FROM: process.env.SMTP_FROM || "TIHLDE Sporty <no-reply@tihlde.org>",
-	/** Show every Spond group to everyone (development); off in production. */
-	DISPLAY_ALL_GROUPS: process.env.DISPLAY_ALL_GROUPS === "true",
 };
