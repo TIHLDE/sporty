@@ -155,14 +155,14 @@ function EventStatus({ event }: { event: SpondOverview["events"][number] }) {
 	);
 }
 
-type EventFilter = "upcoming" | "past" | "all";
+export type EventFilter = "upcoming" | "past" | "all";
 const eventFilterLabels: Record<EventFilter, string> = {
 	upcoming: "Kommende",
 	past: "Tidligere",
 	all: "Alle",
 };
 
-function EventFilterSelect({
+export function EventFilterSelect({
 	value,
 	onChange,
 }: {
@@ -190,7 +190,7 @@ function EventFilterSelect({
 	);
 }
 
-function EventsTable({
+export function EventsTable({
 	events,
 	filter,
 	onOpen,
