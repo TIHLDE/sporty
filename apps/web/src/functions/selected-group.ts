@@ -1,3 +1,4 @@
+import { getViewer } from "@sporty/api/people";
 import {
 	getVisibleGroups,
 	SELECTED_GROUP_COOKIE,
@@ -8,16 +9,26 @@ import { z } from "zod";
 
 import { createContext } from "@/context";
 
+export type AccessState =
+	/** No group picked on /groups, or the picked group is no longer visible. */
+	| "no-group"
+	/** Not linked to a Spond member in the picked group yet. */
+	| "unlinked"
+	| "ok";
+
 /**
- * Whether a group has been picked on /groups and the user may still see it.
- * False both before the first pick and after losing access to the group.
+ * Where the user is on the way into the dashboard: they have to pick a group
+ * and then be linked to their Spond member in it.
  */
-export const hasSelectedGroup = createServerFn({ method: "GET" }).handler(
-	async () => {
+export const getAccessState = createServerFn({ method: "GET" }).handler(
+	async (): Promise<AccessState> => {
 		const ctx = await createContext({ req: getRequest() });
-		if (!ctx.selectedGroupId) return false;
+		if (!ctx.selectedGroupId) return "no-group";
 		const groups = await getVisibleGroups(ctx);
-		return groups.some((g) => g.id === ctx.selectedGroupId);
+		const group = groups.find((g) => g.id === ctx.selectedGroupId);
+		if (!group) return "no-group";
+		const viewer = await getViewer(ctx.db, ctx.session, group);
+		return viewer.member ? "ok" : "unlinked";
 	},
 );
 

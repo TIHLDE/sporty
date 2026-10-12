@@ -1,7 +1,9 @@
+import type { Mailer } from "@sporty/api/context";
 import { PhotonClient } from "@sporty/api/photon";
 import { createAuth, PHOTON_ISSUER } from "@sporty/auth";
 import { createPrismaClient } from "@sporty/db";
 import { SpondClient } from "@sporty/spond";
+import nodemailer from "nodemailer";
 
 import { ENV } from "./env.server";
 
@@ -72,3 +74,33 @@ export const photon = new PhotonClient({
 		return pending;
 	},
 });
+
+function createMailer(): Mailer | null {
+	if (ENV.SMTP_HOST) {
+		const transport = nodemailer.createTransport({
+			host: ENV.SMTP_HOST,
+			port: ENV.SMTP_PORT,
+			// Port 465 is TLS from the start; others upgrade with STARTTLS.
+			secure: ENV.SMTP_PORT === 465,
+			auth: ENV.SMTP_USER
+				? { user: ENV.SMTP_USER, pass: ENV.SMTP_PASSWORD }
+				: undefined,
+		});
+		return {
+			async send(message) {
+				await transport.sendMail({ from: ENV.SMTP_FROM, ...message });
+			},
+		};
+	}
+	// Without SMTP in development, print emails so codes can still be used.
+	if (ENV.NODE_ENV !== "production") {
+		return {
+			async send({ to, subject, text }) {
+				console.info(`[mail] Til: ${to}\n[mail] Emne: ${subject}\n${text}`);
+			},
+		};
+	}
+	return null;
+}
+
+export const mailer = createMailer();

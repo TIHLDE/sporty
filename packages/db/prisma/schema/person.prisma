@@ -1,5 +1,6 @@
 /// A Spond member in one of our Spond groups, optionally linked to a TIHLDE user.
-/// Synced from Spond; the TIHLDE link is set by a Spond administrator.
+/// Synced from Spond; the TIHLDE link is set by a Spond administrator, either
+/// directly or by approving a PersonLinkRequest.
 /// Used as the identity for the fine system ("botsystemet").
 model Person {
   id             String    @id @default(cuid())
@@ -25,6 +26,43 @@ model Person {
   @@index([spondEmail])
   @@index([tihldeEmail])
   @@map("person")
+}
+
+/// A TIHLDE user's claim to be a Spond member, waiting for a Spond
+/// administrator to approve it. Deleted when approved or rejected.
+model PersonLinkRequest {
+  id            String   @id @default(cuid())
+  spondGroupId  String
+  spondMemberId String
+  /// Photon (tihlde.org) user id of the requester.
+  tihldeUserId  String
+  tihldeEmail   String?
+  tihldeName    String?
+  /// App user id of the requester.
+  requestedById String
+  createdAt     DateTime @default(now())
+
+  @@unique([spondGroupId, tihldeUserId])
+  @@index([spondGroupId])
+  @@map("person_link_request")
+}
+
+/// A one-time code sent to a Spond member's email, so a TIHLDE user can prove
+/// the email is theirs and link themselves without an administrator.
+model LinkVerificationCode {
+  id            String   @id @default(cuid())
+  spondGroupId  String
+  spondMemberId String
+  /// Photon (tihlde.org) user id of the user verifying.
+  tihldeUserId  String
+  /// SHA-256 of the code; the code itself is only in the email.
+  codeHash      String
+  attempts      Int      @default(0)
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+
+  @@unique([spondGroupId, tihldeUserId])
+  @@map("link_verification_code")
 }
 
 /// Per Spond group settings.
