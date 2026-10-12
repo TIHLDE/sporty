@@ -4,6 +4,7 @@
  * and the scene is created once instead of reconfigured on every render.
  */
 // biome-ignore-all lint: vendored from React Bits, kept close to upstream.
+// oxlint-disable -- vendored from React Bits, kept close to upstream.
 import { useEffect, useRef, useState } from "react";
 import {
 	ACESFilmicToneMapping,

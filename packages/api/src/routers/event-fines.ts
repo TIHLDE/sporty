@@ -96,7 +96,7 @@ export const eventFinesRouter = router({
 	list: protectedProcedure
 		.input(z.object({ groupId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const settings = await getFineSettings(ctx.db, group.id);
 			const exempt = exemptMemberIds(group);
@@ -179,7 +179,7 @@ export const eventFinesRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const group = await getGroup(ctx.spond, input.groupId);
+			const group = await getGroup(ctx, input.groupId);
 			await requirePeopleManager(ctx.db, ctx.session, group);
 			const settings = await getFineSettings(ctx.db, group.id);
 			const groupSlug = settings.tihldeGroupSlug;

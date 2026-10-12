@@ -70,7 +70,7 @@ const approach = (
 const hexToRgb = (hex: string): [number, number, number] => {
 	let h = String(hex || "").replace("#", "");
 	if (h.length === 3) h = h.replace(/./g, (c) => c + c);
-	const n = parseInt(h.slice(0, 6), 16);
+	const n = Number.parseInt(h.slice(0, 6), 16);
 	return Number.isNaN(n)
 		? [255, 255, 255]
 		: [(n >> 16) & 255, (n >> 8) & 255, n & 255];
@@ -833,12 +833,16 @@ const TechText = ({
 	return (
 		<div
 			ref={containerRef}
-			className={`relative w-full h-full touch-pan-y select-none ${className}`.trim()}
+			className={`relative h-full w-full touch-pan-y select-none ${className}`.trim()}
 			style={style}
-			role="img"
-			aria-label={text}
 		>
-			<canvas ref={canvasRef} className="block w-full h-full" />
+			<canvas
+				ref={canvasRef}
+				className="block h-full w-full"
+				// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+				role="img"
+				aria-label={text}
+			/>
 		</div>
 	);
 };

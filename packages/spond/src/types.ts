@@ -31,6 +31,8 @@ export type SpondGroup = {
 	id: string;
 	name: string;
 	activity?: string;
+	/** The group's logo. */
+	imageUrl?: string;
 	createdTime: string;
 	members: SpondMember[];
 	subGroups: SpondSubGroup[];
