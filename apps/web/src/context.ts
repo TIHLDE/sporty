@@ -2,7 +2,7 @@ import type { Context as ApiContext } from "@sporty/api/context";
 import { SELECTED_GROUP_COOKIE } from "@sporty/api/spond-cache";
 
 import { ENV } from "./env.server";
-import { auth, db, photon, spond } from "./services";
+import { auth, db, mailer, photon, spond } from "./services";
 
 export async function createContext({
 	req,
@@ -17,6 +17,7 @@ export async function createContext({
 		session,
 		spond,
 		photon,
+		mailer,
 		selectedGroupId: readCookie(req, SELECTED_GROUP_COOKIE),
 		displayAllGroups: ENV.DISPLAY_ALL_GROUPS,
 	};

@@ -34,12 +34,15 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+	CheckIcon,
 	CircleCheckIcon,
+	InboxIcon,
 	LinkIcon,
 	PencilIcon,
 	ScaleIcon,
 	SearchIcon,
 	ShieldAlertIcon,
+	XIcon,
 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
@@ -200,6 +203,8 @@ function PeopleAdmin({ people }: { people: Person[] }) {
 					</CardFooter>
 				</Card>
 			</div>
+
+			<LinkRequests />
 
 			<div className="grid gap-4 px-4 lg:px-6">
 				<FinesSettings />
@@ -389,6 +394,116 @@ function PersonRow({ person, onEdit }: { person: Person; onEdit: () => void }) {
 				</Button>
 			</TableCell>
 		</TableRow>
+	);
+}
+
+function LinkRequests() {
+	const trpc = useTRPC();
+	const queryClient = useQueryClient();
+	const requests = useQuery(trpc.people.linkRequests.queryOptions({}));
+
+	const invalidate = () => {
+		for (const key of [
+			trpc.people.linkRequests.queryKey(),
+			trpc.people.list.queryKey(),
+			trpc.people.tihldeMembers.queryKey(),
+			trpc.spond.overview.queryKey(),
+			trpc.fines.overview.queryKey(),
+		]) {
+			queryClient.invalidateQueries({ queryKey: key });
+		}
+	};
+	const onError = (error: { message: string }) => toast.error(error.message);
+	const approve = useMutation(
+		trpc.people.approveLinkRequest.mutationOptions({
+			onSuccess: (person) => {
+				toast.success(
+					`${person.name} er koblet til ${person.tihldeName ?? person.tihldeEmail}`,
+				);
+				invalidate();
+			},
+			onError,
+		}),
+	);
+	const reject = useMutation(
+		trpc.people.rejectLinkRequest.mutationOptions({
+			onSuccess: () => {
+				toast.success("Forespørselen er avvist");
+				invalidate();
+			},
+			onError,
+		}),
+	);
+	const pending = approve.isPending || reject.isPending;
+
+	if (!requests.data?.length) return null;
+
+	return (
+		<div className="px-4 lg:px-6">
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2">
+						<InboxIcon className="size-4" />
+						Ventende forespørsler
+						<Badge variant="secondary">{requests.data.length}</Badge>
+					</CardTitle>
+					<CardDescription>
+						Brukere som har funnet seg selv i Spond og ber om å bli koblet.
+						Sjekk at det er riktig person før du godkjenner.
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="grid gap-2">
+					{requests.data.map((r) => (
+						<div
+							key={r.id}
+							className="flex flex-wrap items-center gap-3 rounded-lg border p-3 text-sm"
+						>
+							<Avatar className="size-8">
+								{r.imageUrl && (
+									<AvatarImage src={r.imageUrl} alt={r.memberName ?? ""} />
+								)}
+								<AvatarFallback className="text-xs">
+									{initials(r.memberName ?? r.tihldeName ?? "?")}
+								</AvatarFallback>
+							</Avatar>
+							<div className="grid min-w-48 flex-1">
+								<span className="font-medium">
+									{r.tihldeName ?? r.tihldeEmail} → {r.memberName ?? "Ukjent"}
+								</span>
+								<span className="text-xs text-muted-foreground">
+									TIHLDE: {r.tihldeEmail ?? "ingen e-post"} · Spond:{" "}
+									{r.spondEmail ?? "ingen e-post"} · {formatDate(r.createdAt)}
+								</span>
+								{!r.memberName && (
+									<span className="text-xs text-amber-600 dark:text-amber-400">
+										Medlemmet er ikke lenger i Spond-gruppen
+									</span>
+								)}
+							</div>
+							<div className="flex gap-2">
+								<Button
+									variant="outline"
+									size="sm"
+									disabled={pending}
+									onClick={() => reject.mutate({ requestId: r.id })}
+								>
+									<XIcon />
+									Avvis
+								</Button>
+								<Button
+									size="sm"
+									disabled={pending || !r.memberName}
+									onClick={() => approve.mutate({ requestId: r.id })}
+								>
+									<CheckIcon />
+									Godkjenn
+								</Button>
+							</div>
+						</div>
+					))}
+				</CardContent>
+			</Card>
+		</div>
 	);
 }
 
