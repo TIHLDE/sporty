@@ -1,0 +1,21 @@
+/// Suggestions and bug reports sent by users.
+
+enum ReportType {
+  BUG @map("bug") 
+  SUGGESTION @map("suggestion")
+}
+
+enum Status {
+  OPEN @map("open")
+  CLOSED @map("closed")
+  REJECTED @map("rejected")
+}
+
+model Report {
+  id          Int @id @default(autoincrement())
+  title       String
+  description String
+  type        ReportType 
+  status      Status     @default(OPEN)
+  createdAt   DateTime   @default(now())
+}
