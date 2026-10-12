@@ -32,6 +32,8 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ### 🐛 Fix
 
+- Innmelding av feil og idéer feilet i produksjon fordi tabellen manglet migrasjon. La til migrasjon, og tabellen heter nå `report` (enumene `report_type` og `report_status`) som resten av databasen
+
 - Brukere som ikke var koblet til Spond fant ingen grupper på `/groups` og kom derfor aldri til `/link-spond`. Alle Spond-gruppene vises nå, merket «Ikke koblet» der man ikke er koblet
 
 ### 🔒 Sikkerhet
