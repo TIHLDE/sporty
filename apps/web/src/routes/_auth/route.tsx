@@ -4,7 +4,7 @@ import type * as React from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { getUser } from "@/functions/get-user";
-import { hasSelectedGroup } from "@/functions/selected-group";
+import { getAccessState } from "@/functions/selected-group";
 
 export const Route = createFileRoute("/_auth")({
 	component: AuthLayout,
@@ -16,9 +16,14 @@ export const Route = createFileRoute("/_auth")({
 			});
 		}
 		// Picking a group is the first step after signing in, and the way back
-		// if the picked group is no longer visible to them.
-		if (!(await hasSelectedGroup())) {
+		// if the picked group is no longer visible to them. Then they have to be
+		// linked to their Spond member in it.
+		const access = await getAccessState();
+		if (access === "no-group") {
 			throw redirect({ to: "/groups" });
+		}
+		if (access === "unlinked") {
+			throw redirect({ to: "/link-spond" });
 		}
 		return { session };
 	},

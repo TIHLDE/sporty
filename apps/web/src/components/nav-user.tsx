@@ -19,7 +19,7 @@ import {
 	useSidebar,
 } from "@sporty/ui/components/sidebar";
 import { useNavigate } from "@tanstack/react-router";
-import { EllipsisVerticalIcon, LinkIcon, LogOutIcon } from "lucide-react";
+import { EllipsisVerticalIcon, LogOutIcon } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -86,17 +86,6 @@ export function NavUser() {
 							</DropdownMenuLabel>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem
-							onClick={() =>
-								navigate({
-									to: "/dashboard",
-									search: { link: true },
-								})
-							}
-						>
-							<LinkIcon />
-							Koble til Spond
-						</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() =>
 								authClient.signOut({

@@ -147,6 +147,7 @@ export const peopleRouter = router({
 			});
 			const linkedIds = new Set(linked.map((p) => p.spondMemberId));
 			return {
+				groupName: group.name,
 				/** Whether codes can be emailed; otherwise only admin requests work. */
 				emailEnabled: ctx.mailer !== null,
 				members: group.members

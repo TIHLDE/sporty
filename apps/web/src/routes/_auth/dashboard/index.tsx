@@ -6,7 +6,6 @@ import { z } from "zod";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { EventDialog } from "@/components/event-dialog";
 import { SectionCards } from "@/components/section-cards";
-import { SelfLinkBanner, SelfLinkDialog } from "@/components/self-link-dialog";
 import { SiteHeader } from "@/components/site-header";
 import { SpondTables } from "@/components/spond-tables";
 import { useTRPC } from "@/utils/trpc";
@@ -15,8 +14,6 @@ const searchSchema = z.object({
 	tab: z.enum(["events", "members", "subgroups"]).optional(),
 	subGroup: z.string().optional(),
 	event: z.string().optional(),
-	/** Opens the dialog for linking yourself to Spond. */
-	link: z.boolean().optional(),
 });
 
 export const Route = createFileRoute("/_auth/dashboard/")({
@@ -48,11 +45,6 @@ function RouteComponent() {
 						<DashboardSkeleton />
 					) : (
 						<div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-							<SelfLinkBanner
-								onOpen={() =>
-									navigate({ search: (prev) => ({ ...prev, link: true }) })
-								}
-							/>
 							<SectionCards stats={data.stats} />
 							<div className="px-4 lg:px-6">
 								<ChartAreaInteractive events={data.events} />
@@ -83,16 +75,6 @@ function RouteComponent() {
 					)}
 				</div>
 			</div>
-			<SelfLinkDialog
-				open={search.link ?? false}
-				onOpenChange={(open) =>
-					!open &&
-					navigate({
-						search: (prev) => ({ ...prev, link: undefined }),
-						replace: true,
-					})
-				}
-			/>
 			<EventDialog
 				eventId={search.event}
 				onOpenChange={(open) =>
