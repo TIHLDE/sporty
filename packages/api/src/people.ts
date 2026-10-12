@@ -146,6 +146,20 @@ export async function getViewer(
 	};
 }
 
+export async function requireTihldeIdentity(
+	db: Database,
+	session: Session | null,
+): Promise<TihldeIdentity> {
+	const tihlde = await getTihldeIdentity(db, session);
+	if (!tihlde) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "Du må være logget inn med TIHLDE for å koble deg til Spond",
+		});
+	}
+	return tihlde;
+}
+
 export async function requirePeopleManager(
 	db: Database,
 	session: Session | null,
@@ -221,11 +235,24 @@ export async function linkPerson(
 		linkedAt: new Date(),
 		linkedById: input.linkedById,
 	};
-	return db.person.upsert({
-		where: { spondMemberId: member.id },
-		create: { spondMemberId: member.id, ...data },
-		update: data,
-	});
+	const [person] = await db.$transaction([
+		db.person.upsert({
+			where: { spondMemberId: member.id },
+			create: { spondMemberId: member.id, ...data },
+			update: data,
+		}),
+		// Requests for this member or by this user are settled by the link.
+		db.personLinkRequest.deleteMany({
+			where: {
+				spondGroupId: group.id,
+				OR: [
+					{ spondMemberId: member.id },
+					...(tihldeUserId ? [{ tihldeUserId }] : []),
+				],
+			},
+		}),
+	]);
+	return person;
 }
 
 export function unlinkPerson(

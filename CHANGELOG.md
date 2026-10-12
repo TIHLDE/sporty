@@ -28,6 +28,14 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 
 ---
 
+## 2026-10-12
+
+### ✨ Feature
+
+- Brukere kan koble seg selv til Spond-medlemmet sitt (via brukermenyen eller banneret på oversikten) ved å bekrefte en kode sendt til e-posten de har i Spond
+- Har man ikke tilgang til Spond-e-posten, kan man i stedet be en administrator godkjenne koblingen på admin-siden
+- Nye miljøvariabler for e-post: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`
+
 ## 2026-10-08
 
 ### ✨ Feature
