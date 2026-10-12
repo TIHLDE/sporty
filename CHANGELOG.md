@@ -36,6 +36,14 @@ Kopier denne blokken til toppen av listen under, og ta bare med kategoriene som 
 - Har man ikke tilgang til Spond-e-posten, kan man i stedet be en administrator godkjenne koblingen på admin-siden
 - Det er nå påkrevd å være koblet til Spond i den valgte gruppen før man kommer inn på dashboardet
 - Nye miljøvariabler for e-post: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`
+- Ny side `/dashboard/events` med tabell over arrangementer, filter for kommende/tidligere, statistikk-kort og egen feil-/lastingstilstand
+- Undergrupper i sidebar lenker nå til egne sider (`/dashboard/subgroups/<id>`) med medlemstabell, i stedet for å sende brukeren til dashboardet med query-parametre
+- Man kan melde inn feil og idéer fra sidebar; innsendte saker vises på admin-siden der status (åpen/lukket/avslått) kan endres
+- Listen over innsendte feil er offentlig, og meldings-dialogen viser lignende åpne saker mens du skriver for å unngå duplikater
+
+### ♻️ Endret
+
+- CI-kjøring på Blacksmith-runners i stedet for vanlige GitHub-runners
 
 ## 2026-10-08
 
